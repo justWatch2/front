@@ -1,6 +1,7 @@
-* {
-  margin: 0;
+table{
+  color:red;
+  display: none;
 }
-.App {
-  background: #111;
+* {
+  border: 1px solid;
 }

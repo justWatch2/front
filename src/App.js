@@ -1,38 +1,17 @@
-import "./App.css";
-import Nav from './components/Nav';
-import Banner from './components/Banner';
-import Row from "./components/Row";
-import requests from "./api/requests";
-import Footer from "./components/Footer";
+// App.js
+import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import Home from "./Home";
+import Detail from "./Detail";
 
 function App() {
-  return (
-    <div className="App">
-      <Nav/>
-      <Banner/>
-      
-      <Row
-        title="NEFLIX ORIGINALS"
-        id="NO"
-        fetchUrl={requests.fetchNetFlixOriginals}
-        isLargeRow
-      />
-      <Row title="Trending Now" id="TN" fetchUrl={requests.fetchTrending} />
-      <Row title="Top Rated" id="TR" fetchUrl={requests.fetchTopRated} />
-      <Row 
-        title="Action Movies" 
-        id="AM" 
-        fetchUrl={requests.fetchActionMovies} 
-      />
-      <Row 
-        title="Comedy Movies" 
-        id="CM" 
-        fetchUrl={requests.fetchComedyMovies} 
-      />
-      <Footer />
-
-    </div>
-  );
+    return (
+        <Router>
+            <Routes>
+                <Route path="/" element={<Home />} />
+                <Route path="/movie/:id" element={<Detail />} />
+            </Routes>
+        </Router>
+    );
 }
 
 export default App;
