@@ -1,0 +1,71 @@
+/* src/styles/MemberModeFilters.css */
+
+/* 회원 모드 필터 컨테이너 */
+.member-mode-filters {
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    gap: 30px;
+    margin-top: 20px;
+    margin-bottom: 30px;
+    padding: 15px 50px;
+    border-radius: 8px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.5);
+    flex-wrap: wrap;
+    overflow: hidden;
+    position: relative; /* 자식 요소 z-index 기준 */
+
+    /* 넷플릭스 시작 화면과 유사한 배경 그라데이션 */
+    background: radial-gradient(
+            ellipse at center, /* 중앙에서 퍼지는 타원형 그라데이션 */
+            rgba(190, 30, 30, 0.99) 0%, /* 중앙은 넷플릭스 빨간색의 옅은 버전 */
+            rgba(108, 23, 25, 0.91) 25%, /* 조금 더 퍼지면서 옅어짐 */
+            rgba(20, 20, 20, 1) 75%, /* 바깥쪽은 거의 검은색 */
+            #000000 100% /* 가장 바깥쪽은 완전 검은색 */
+    );
+    background-size: 150% 150%; /* 그라데이션 크기를 키워 미묘하게 보이도록 */
+    background-position: center; /* 중앙 정렬 */
+    animation: netflixIntroBackground 10s ease-in-out infinite alternate; /* 은은하게 움직이는 애니메이션 */
+
+    /* 기존에 있던 줄무늬 배경 관련 스타일 제거 */
+    /* background: linear-gradient( ... ); */
+    /* background-size: 200px 100%; */
+    /* background-position: 0% 0%; */
+    /* animation: slideBackground 20s linear infinite; */
+}
+
+/* 넷플릭스 시작 화면 배경 움직임 애니메이션 키프레임 */
+@keyframes netflixIntroBackground {
+    0% { background-position: 0% 0%; }
+    50% { background-position: 100% 100%; } /* 대각선으로 움직였다 돌아오도록 */
+    100% { background-position: 0% 0%; }
+}
+
+
+/* ... (나머지 filter-group, label, button-group, genre-item 스타일 유지) ... */
+
+
+
+/* 배경 움직임 애니메이션 키프레임 */
+@keyframes slideBackground {
+    from { background-position: 0% 0%; }
+    to { background-position: 100% 0%; } /* 배경을 오른쪽으로 이동 */
+}
+
+
+/* ... (나머지 filter-group, label, button-group, genre-item 스타일 유지) ... */
+
+/* genre-item 내부 텍스트와 아이콘의 z-index를 높여 배경 위에 보이도록 */
+.filter-group label, .button-group .genre-item {
+    position: relative;
+    z-index: 2; /* 배경 위에 오도록 */
+    /* 필요하다면 text-shadow를 더 강하게 줄 수 있습니다. */
+    text-shadow: 0 0 5px rgba(0,0,0,0.8);
+}
+
+/* genre-item 내부 텍스트와 아이콘의 z-index를 높여 배경 위에 보이도록 */
+.filter-group label, .button-group .genre-item {
+    position: relative;
+    z-index: 2; /* 배경 위에 오도록 */
+    text-shadow: 0 0 5px rgba(0,0,0,0.8); /* 텍스트 그림자 */
+}
