@@ -1,0 +1,244 @@
+/* src/styles/MovieModal.css */
+
+/* 모달 오버레이: 뒷 배경을 어둡게 처리, 스크롤 방지 */
+.movie-modal-overlay {
+    position: fixed; /* 뷰포트 기준으로 고정 */
+    top: 0;
+    left: 0;
+    width: 90vw; /* 뷰포트 전체 너비 */
+    height: 90vh; /* 뷰포트 전체 높이 */
+    background-color: rgba(0, 0, 0, 0.75); /* 반투명 검은색 배경 */
+    display: flex; /* 자식 요소(모달 콘텐츠)를 정렬하기 위함 */
+    justify-content: center; /* 가로 중앙 정렬 */
+    align-items: flex-start; /* 세로 상단 정렬 (JS에서 top 값을 줄 것이므로) */
+    z-index: 1000; /* 다른 모든 콘텐츠 위에 오도록 */
+    overflow-y: auto; /* 오버레이에 스크롤바가 생기도록 (모달 자체는 스크롤 안 함) */
+    overflow-x: hidden; /* 가로 스크롤 방지 */
+    /* padding-top/bottom은 필요 없음 (align-items: flex-start + JS top 값) */
+}
+
+/* 모달 콘텐츠 박스 */
+.movie-modal-content {
+    background-color: #181818; /* 넷플릭스 모달 배경색 */
+    border-radius: 8px;
+
+    /* === 핵심: 모달 크기 조정 === */
+    width: 60%; /* 모달 너비를 60%로 설정 (이전보다 더 줄임) */
+    max-width: 650px; /* 최대 너비를 700px에서 650px로 줄임 */
+    max-height: 90vh; /* 뷰포트 높이의 90%를 넘지 않도록 제한 */
+
+    display: flex;
+    flex-direction: column;
+
+    /* === 핵심: JS에서 top을 제어하기 위한 position: absolute === */
+    position: absolute; /* overlay를 기준으로 위치 조정 (JS에서 top 값을 줄 것) */
+    left: 50%; /* 가로 중앙 정렬은 CSS에서 담당 */
+    /* top과 transform (translateY)은 JS에서 동적으로 설정됩니다. */
+    /* transform: translateX(-50%); 는 초기값이며, JS에서 덮어쓸 수 있습니다. */
+
+    color: white;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+    animation: modalAppear 0.3s forwards; /* 등장 애니메이션 */
+    overflow-y: auto; /* 모달 콘텐츠가 길어지면 모달 내부에서만 스크롤 발생 */
+    overflow-x: hidden; /* 가로 스크롤 방지 */
+}
+
+/* 모달 등장 애니메이션 (transform을 JS에서 제어하므로, opacity와 scale만) */
+@keyframes modalAppear {
+    from { opacity: 0; transform: scale(0.95) translateX(-50%); } /* JS의 초기 transform과 일치 */
+    to { opacity: 1; transform: scale(1) translateX(-50%); } /* JS의 초기 transform과 일치 */
+}
+
+
+/* 닫기 버튼 */
+.movie-modal-close-button {
+    position: absolute;
+    top: 15px;
+    right: 15px;
+    background-color: rgba(255, 255, 255, 0.1);
+    border: none;
+    border-radius: 50%;
+    color: white;
+    font-size: 20px;
+    width: 36px;
+    height: 36px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+    z-index: 10;
+    transition: background-color 0.3s ease;
+}
+
+.movie-modal-close-button:hover {
+    background-color: rgba(255, 255, 255, 0.3);
+}
+
+/* 미디어 영역 (트레일러/포스터 + 오버레이 정보) */
+.movie-modal-media-area {
+    position: relative;
+    width: 100%;
+    padding-top: 56.25%; /* 16:9 비율 유지 */
+    background-color: black;
+    overflow: hidden;
+}
+
+.movie-modal-trailer,
+.movie-modal-poster-large {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+/* 미디어 위에 겹쳐지는 정보 및 버튼 영역 */
+.movie-modal-overlay-buttons {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    padding: 20px 40px;
+    background: linear-gradient(to top, rgba(0, 0, 0, 0.7) 0%, rgba(0, 0, 0, 0) 100%);
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    align-items: flex-start;
+    color: white;
+}
+
+.movie-modal-title {
+    font-size: 2.2em;
+    margin-bottom: 15px;
+    text-shadow: 2px 2px 4px rgba(0,0,0,0.7);
+}
+
+.modal-buttons-group {
+    display: flex;
+    gap: 15px;
+}
+
+.modal-play-button,
+.modal-info-button {
+    background-color: white;
+    color: black;
+    border: none;
+    padding: 10px 25px;
+    border-radius: 5px;
+    font-size: 1.1em;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.modal-info-button {
+    background-color: rgba(109, 109, 110, 0.7);
+    color: white;
+}
+
+.modal-play-button:hover {
+    background-color: rgba(255, 255, 255, 0.8);
+}
+
+.modal-info-button:hover {
+    background-color: rgba(109, 109, 110, 0.9);
+}
+
+.modal-play-button i,
+.modal-info-button i {
+    margin-right: 8px;
+    font-size: 1.2em;
+}
+
+/* 상세 정보 영역 */
+.movie-modal-details-area {
+    padding: 30px 40px;
+    display: flex;
+    flex-direction: column;
+    overflow-y: auto; /* 이 영역 자체에서 스크롤 발생 */
+    flex-grow: 1;
+}
+
+.movie-modal-meta {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    font-size: 1em;
+    margin-bottom: 20px;
+    color: #a3a3a3;
+}
+
+.match-percentage {
+    color: #46d369;
+    font-weight: bold;
+}
+
+.release-year { /* 기본 스타일 */ }
+.age-rating {
+    border: 1px solid #a3a3a3;
+    padding: 2px 6px;
+    border-radius: 3px;
+    font-size: 0.9em;
+}
+
+.hd-badge {
+    border: 1px solid #a3a3a3;
+    padding: 2px 6px;
+    border-radius: 3px;
+    font-size: 0.9em;
+}
+
+.movie-modal-overview-section {
+    display: flex;
+    justify-content: space-between;
+    gap: 40px;
+}
+
+.movie-modal-overview {
+    flex: 2;
+    font-size: 1.1em;
+    line-height: 1.6;
+    color: #e5e5e5;
+}
+
+.movie-modal-genre-rating {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    font-size: 1em;
+}
+
+.modal-genres {
+    color: #a3a3a3;
+}
+.modal-genres strong {
+    color: #e5e5e5;
+}
+
+.modal-rating-stars {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}
+
+/* react-rating 유니코드 별표 스타일 */
+.react-rating-modal-stars .icon-star {
+    font-size: 1.2em;
+    line-height: 1;
+    color: #ccc;
+}
+
+.react-rating-modal-stars .icon-star:nth-child(-n + 5) {
+    color: #ffd700;
+}
+
+.modal-rating-score {
+    margin-left: 5px;
+    font-size: 1em;
+    color: #a3a3a3;
+}
