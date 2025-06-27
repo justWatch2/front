@@ -1,7 +1,0 @@
-node_modules
-.idea/
-.env
-.eslintrc.json
-.prettierrc
-package-lock.json
-package.json
