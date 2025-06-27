@@ -1,5 +1,5 @@
 import axios from "axios";
-import { useLocation, useNavigate, useParams } from "react-router";
+import { useNavigate, useParams } from "react-router";
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import Row from "./Row.jsx";
@@ -10,7 +10,6 @@ import { FaRegStar, FaStar, FaStarHalfAlt } from 'react-icons/fa';
 import styles from "./Detail.module.css";
 
 function Detail() {
-    const location = useLocation();
     const { category, id } = useParams();
     const [contents, setContents] = useState(null);
     const [wish, setWish] = useState(false);
@@ -223,14 +222,14 @@ function Detail() {
                         </div>
                     )}
                 </div>
-                <hr />
+                {/* <hr /> */}
                 {contents?.videos?.results?.length > 0 ? (
                     <Row data={contents?.videos?.results}
                          title={"관련 동영상"}
                          fetchUrl={""}
                     ></Row>
                 ) : <br />}
-                <hr />
+                {/* <hr /> */}
                 {contents?.credits?.cast?.length > 0 ? (
                     <Row data={contents?.credits?.cast}
                          title={"출연진"}

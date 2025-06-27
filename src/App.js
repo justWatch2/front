@@ -71,7 +71,7 @@ function App() {
           <Route path="/post/detaile/:no" element={""}></Route>
 
           <Route path="/search" element={<Home/>}></Route>
-          <Route path="/search/detail/:category/:id" element={<Detail/>}></Route>
+          <Route path="/detail/:category/:id" element={<Detail/>}></Route>
           <Route path="/mypage" element={""}></Route>
 
         </Routes>
