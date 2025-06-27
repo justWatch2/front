@@ -64,14 +64,14 @@ function App() {
           <Route path="/recommend/main" element={<RecommendReal/>}></Route>
           <Route path="/recommend/friend" element={<FriendRecommend />}></Route>
 
-          <Route path="/post" element={<Posts/>}></Route>
-          <Route path="/write/:id" element={<Write />} />
+          <Route path="/posts/:cat" element={<Posts/>}></Route>
+          <Route path="/write/:no" element={<Write />} />
           <Route path="/post/:postNo" element={<Post />} />
 
-          <Route path="/post/detaile/:no" element={""}></Route>
+          {/*<Route path="//detaile/:no" element={<Detail/>}/>*/}
 
-          <Route path="/search" element={<Home/>}></Route>
-          <Route path="/search/detail/:category/:id" element={<Detail/>}></Route>
+         <Route path="/search" element={<Home/>}></Route>
+          <Route path="/detail/:category/:id" element={<Detail/>}></Route>
           <Route path="/mypage" element={""}></Route>
 
         </Routes>

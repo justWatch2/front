@@ -1,7 +1,7 @@
-import { useEffect, useState } from "react";
+import {useEffect, useState} from "react";
 import axios from "axios";
-import { NavLink, useNavigate, useParams } from "react-router-dom";
-import { Field, Form, Formik } from "formik";
+import {NavLink, useNavigate, useParams} from "react-router-dom";
+import {Field, Form, Formik} from "formik";
 import {
     Box,
     Button,
@@ -15,10 +15,12 @@ import {
     Paper,
 } from "@mui/material";
 import ThumbUpIcon from "@mui/icons-material/ThumbUp";
+import {checkToken} from "../../tokenUtils/TokenUtil4Post";
 
 function Post() {
     const navigate = useNavigate();
-    const { postNo } = useParams();
+    const {postNo} = useParams();
+    const [id, setId] = useState(null);
     const [post, setPost] = useState({
         title: "",
         category: "",
@@ -35,8 +37,10 @@ function Post() {
     const [replys, setReplys] = useState([]);
 
     useEffect(() => {
-        axios
-            .get(`/api/getPost?no=${postNo}&id=1111`)
+        checkToken({
+            method: "get",
+            url: `http://localhost:8080/api/non-member/getPost?no=${postNo}`
+        })
             .then((res) => {
                 console.log(res.data.replys);
                 const newPost = {
@@ -57,19 +61,21 @@ function Post() {
                     fileUrl: res.data.post.fileUrllist,
                 };
                 setPost(newPost);
-                setLikeCount({ flag: res.data.likePost, count: res.data.post.likeCount });
+                setLikeCount({flag: res.data.likePost, count: res.data.post.likeCount});
                 const updatedReplys = res.data.replys.map((rep) => ({
                     ...rep,
                     likeFlag: rep.liked,
                 }));
                 setReplys(updatedReplys);
+                console.log(res.data.id);
+                setId(res.data.id);
             })
             .catch((err) => console.log(err));
     }, [postNo]);
 
     function updateReplys() {
         axios
-            .get(`/api/getReplys?no=${postNo}`)
+            .get(`/api/non-member/getReplys?no=${postNo}`)
             .then((res) => {
                 const updatedReplys = res.data.map((rep) => ({
                     ...rep,
@@ -81,14 +87,22 @@ function Post() {
     }
 
     function handleReplyLike(replyNum, currentFlag) {
+        if (id == "none") {
+            alert("로그인이 필요한 기능입니다.");
+            return;
+        }
         const formData = new FormData();
         formData.append("replyNo", replyNum);
         formData.append("param", !currentFlag);
-        formData.append("memberId", "1111");
-        console.log("currentFlag"+ !currentFlag);
-
-        axios
-            .put("/api/likeReply", formData)
+        formData.append("memberId", id);
+        console.log("currentFlag" + !currentFlag);
+        checkToken(
+            {
+                method: "put",
+                url: "http://localhost:8080/api/likeReply",
+                data: formData,
+            }
+        )
             .then((res) => {
                 if (res.data === "success") {
                     setReplys(
@@ -111,26 +125,26 @@ function Post() {
 
     function ReplyReturn() {
         return (
-            <Box sx={{ mt: 3 }}>
+            <Box sx={{mt: 3}}>
                 <Typography
                     variant="h6"
-                    sx={{ color: "#ffffff", fontSize: "1.5rem", fontWeight: "bold", mb: 1 }}
+                    sx={{color: "#ffffff", fontSize: "1.5rem", fontWeight: "bold", mb: 1}}
                 >
                     댓글
                 </Typography>
-                <List sx={{ backgroundColor: "#1e1e1e", borderRadius: "4px" }}>
+                <List sx={{backgroundColor: "#1e1e1e", borderRadius: "4px"}}>
                     {replys.map((rep, index) => (
                         <Box key={index}>
                             <ListItem>
                                 <ListItemText
                                     primary={
-                                        <Typography sx={{ color: "#ffffff", fontSize: "1.1rem" }}>
+                                        <Typography sx={{color: "#ffffff", fontSize: "1.1rem"}}>
                                             {rep.num} - {rep.name} - {rep.contents}
                                         </Typography>
                                     }
                                     secondary={
-                                        <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
-                                            <Typography sx={{ color: "#bbbbbb", fontSize: "1rem" }}>
+                                        <Box sx={{display: "flex", alignItems: "center", gap: 1}}>
+                                            <Typography sx={{color: "#bbbbbb", fontSize: "1rem"}}>
                                                 {new Date(rep.time).toLocaleString("ko-KR", {
                                                     year: "numeric",
                                                     month: "2-digit",
@@ -143,10 +157,10 @@ function Post() {
                                             </Typography>
                                             <IconButton
                                                 onClick={() => handleReplyLike(rep.num, rep.likeFlag)}
-                                                sx={{ color: rep.likeFlag ? "#ff9999" : "#ffffff", padding: 0 }}
+                                                sx={{color: rep.likeFlag ? "#ff9999" : "#ffffff", padding: 0}}
                                             >
-                                                <ThumbUpIcon sx={{ fontSize: "1rem" }} />
-                                                <Typography sx={{ ml: 0.5, fontSize: "1rem", color: "#bbbbbb" }}>
+                                                <ThumbUpIcon sx={{fontSize: "1rem"}}/>
+                                                <Typography sx={{ml: 0.5, fontSize: "1rem", color: "#bbbbbb"}}>
                                                     {rep.likeCount}
                                                 </Typography>
                                             </IconButton>
@@ -154,7 +168,7 @@ function Post() {
                                     }
                                 />
                             </ListItem>
-                            {index < replys.length - 1 && <Divider sx={{ backgroundColor: "#333333" }} />}
+                            {index < replys.length - 1 && <Divider sx={{backgroundColor: "#333333"}}/>}
                         </Box>
                     ))}
                 </List>
@@ -162,12 +176,12 @@ function Post() {
         );
     }
 
-    function Reply({ id }) {
+    function Reply({id}) {
         return (
-            <Box sx={{ mt: 3 }}>
+            <Box sx={{mt: 3}}>
                 <Typography
                     variant="h6"
-                    sx={{ color: "#ffffff", fontSize: "1.5rem", fontWeight: "bold", mb: 1 }}
+                    sx={{color: "#ffffff", fontSize: "1.5rem", fontWeight: "bold", mb: 1}}
                 >
                     댓글 작성
                 </Typography>
@@ -184,14 +198,16 @@ function Post() {
                         }
                         return errors;
                     }}
-                    onSubmit={(values, { setSubmitting, resetForm }) => {
+                    onSubmit={(values, {setSubmitting, resetForm}) => {
                         setSubmitting(true);
                         const formData = new FormData();
                         formData.append("postNo", values.postNo);
                         formData.append("name", values.name);
                         formData.append("contents", values.contents);
-                        axios
-                            .post("/api/saveReply", formData)
+                        checkToken({
+                            method: 'post',
+                            url: 'http://localhost:8080/api/saveReply'
+                        })
                             .then((res) => {
                                 alert(res.data);
                                 updateReplys();
@@ -205,32 +221,32 @@ function Post() {
                             });
                     }}
                 >
-                    {({ errors, touched, isSubmitting }) => (
+                    {({errors, touched, isSubmitting}) => (
                         <Form>
-                            <Box sx={{ display: "flex", gap: 2, alignItems: "flex-start" }}>
+                            <Box sx={{display: "flex", gap: 2, alignItems: "flex-start"}}>
                                 <Field name="name">
-                                    {({ field }) => (
+                                    {({field}) => (
                                         <TextField
                                             {...field}
                                             label="작성자"
                                             value={id}
-                                            InputProps={{ readOnly: true }}
+                                            InputProps={{readOnly: true}}
                                             variant="outlined"
-                                            InputLabelProps={{ shrink: true }}
+                                            InputLabelProps={{shrink: true}}
                                             sx={{
                                                 width: "150px",
-                                                "& .MuiInputBase-input": { color: "#ffffff", fontSize: "1.1rem" },
-                                                "& .MuiInputLabel-root": { color: "#bbbbbb", fontSize: "1.2rem" },
+                                                "& .MuiInputBase-input": {color: "#ffffff", fontSize: "1.1rem"},
+                                                "& .MuiInputLabel-root": {color: "#ffffff", fontSize: "1.2rem"},
                                                 "& .MuiOutlinedInput-root": {
-                                                    "& fieldset": { borderColor: "#ffffff" },
-                                                    "&:hover fieldset": { borderColor: "#dddddd" },
+                                                    "& fieldset": {borderColor: "#ffffff"},
+                                                    "&:hover fieldset": {borderColor: "#dddddd"},
                                                 },
                                             }}
                                         />
                                     )}
                                 </Field>
                                 <Field name="contents">
-                                    {({ field }) => (
+                                    {({field}) => (
                                         <TextField
                                             {...field}
                                             label="댓글 내용"
@@ -239,14 +255,14 @@ function Post() {
                                             error={touched.contents && !!errors.contents}
                                             helperText={touched.contents && errors.contents}
                                             variant="outlined"
-                                            InputLabelProps={{ shrink: true }}
+                                            InputLabelProps={{shrink: true}}
                                             sx={{
                                                 flexGrow: 1,
-                                                "& .MuiInputBase-input": { color: "#ffffff", fontSize: "1.1rem" },
-                                                "& .MuiInputLabel-root": { color: "#bbbbbb", fontSize: "1.2rem" },
+                                                "& .MuiInputBase-input": {color: "#ffffff", fontSize: "1.1rem"},
+                                                "& .MuiInputLabel-root": {color: "#bbbbbb", fontSize: "1.2rem"},
                                                 "& .MuiOutlinedInput-root": {
-                                                    "& fieldset": { borderColor: "#ffffff" },
-                                                    "&:hover fieldset": { borderColor: "#dddddd" },
+                                                    "& fieldset": {borderColor: "#ffffff"},
+                                                    "&:hover fieldset": {borderColor: "#dddddd"},
                                                 },
                                             }}
                                         />
@@ -273,13 +289,19 @@ function Post() {
     }
 
     function updateLikeCountPost(b) {
+        if (id == "none") {
+            alert("로그인이 필요한 기능입니다.");
+            return;
+        }
         const formData = new FormData();
         formData.append("postNo", postNo);
         formData.append("param", b);
-        formData.append("memberId", "1111");
-
-        axios
-            .put("/api/likePost", formData)
+        formData.append("memberId", id);
+        checkToken({
+            method: "put",
+            url: "http://localhost:8080/api/likePost",
+            data: formData,
+        })
             .then((res) => {
                 if (res.data === "success") {
                     setLikeCount({
@@ -294,16 +316,16 @@ function Post() {
     }
 
     function HandlerPostEdit() {
-        if ("1111" === post.name) {
+        if (id === post.name) {
             return (
                 <Button
                     variant="outlined"
-                    sx={{ color: "#ffffff", borderColor: "#ffffff", fontSize: "1.1rem" }}
+                    sx={{color: "#ffffff", borderColor: "#ffffff", fontSize: "1.1rem"}}
                 >
                     <NavLink
                         to={`/write/${postNo}`}
-                        state={{ postDetail: post }}
-                        style={{ color: "#ffffff", textDecoration: "none" }}
+                        state={{postDetail: post}}
+                        style={{color: "#ffffff", textDecoration: "none"}}
                     >
                         글 수정
                     </NavLink>
@@ -314,32 +336,32 @@ function Post() {
     }
 
     return (
-        <Box sx={{ p: 3, backgroundColor: "#121212", minHeight: "100vh" }}>
+        <Box sx={{p: 3, backgroundColor: "#121212", minHeight: "100vh"}}>
             <Typography
                 variant="h4"
-                sx={{ color: "#ffffff", fontSize: "2.5rem", fontWeight: "bold", mb: 1 }}
+                sx={{color: "#ffffff", fontSize: "2.5rem", fontWeight: "bold", mb: 1}}
             >
                 글 상세
             </Typography>
             <Typography
-                sx={{ color: "#bbbbbb", fontSize: "1rem", mb: 2 }}
+                sx={{color: "#bbbbbb", fontSize: "1rem", mb: 2}}
             >
                 게시판 &gt; {post.category}
             </Typography>
             <Box
                 component={Paper}
-                sx={{ p: 2, backgroundColor: "#1e1e1e", borderRadius: "4px", mb: 3 }}
+                sx={{p: 2, backgroundColor: "#1e1e1e", borderRadius: "4px", mb: 3}}
             >
-                <Typography sx={{ color: "#ff9999", fontSize: "1.5rem", fontWeight: "bold" }}>
+                <Typography sx={{color: "#ff9999", fontSize: "1.5rem", fontWeight: "bold"}}>
                     {post.title}
                 </Typography>
-                <Box sx={{ mt: 1, display: "flex", gap: 2, color: "#ffffff", fontSize: "1.2rem" }}>
+                <Box sx={{mt: 1, display: "flex", gap: 2, color: "#ffffff", fontSize: "1.2rem"}}>
                     {/*<Typography sx={{ fontSize: "1.2rem" }}>카테고리: {post.category}</Typography>*/}
-                    <Typography sx={{ fontSize: "1.2rem" }}>작성자: {post.name}</Typography>
-                    <Typography sx={{ fontSize: "1.2rem" }}>작성일: {post.indate}</Typography>
-                    <Typography sx={{ fontSize: "1.2rem" }}>조회수: {post.count}</Typography>
+                    <Typography sx={{fontSize: "1.2rem"}}>작성자: {post.name}</Typography>
+                    <Typography sx={{fontSize: "1.2rem"}}>작성일: {post.indate}</Typography>
+                    <Typography sx={{fontSize: "1.2rem"}}>조회수: {post.count}</Typography>
                 </Box>
-                <Typography sx={{ mt: 2, color: "#ffffff", fontSize: "1.1rem" }}>
+                <Typography sx={{mt: 2, color: "#ffffff", fontSize: "1.1rem"}}>
                     {post.contents}
                 </Typography>
                 {/* {post.fileUrl.length > 0 && (
@@ -352,18 +374,29 @@ function Post() {
           </Box>
         )} */}
             </Box>
-            <Box sx={{ display: "flex", gap: 2, mb: 3 }}>
+            <Box sx={{display: "flex", gap: 2, mb: 3}}>
                 <IconButton
                     onClick={() => updateLikeCountPost(!likeCount.flag)}
-                    sx={{ color: likeCount.flag ? "#ff9999" : "#ffffff" }}
+                    sx={{color: likeCount.flag ? "#ff9999" : "#ffffff"}}
                 >
-                    <ThumbUpIcon />
-                    <Typography sx={{ ml: 1, fontSize: "1.1rem" }}>{likeCount.count}</Typography>
+                    <ThumbUpIcon/>
+                    <Typography sx={{ml: 1, fontSize: "1.1rem"}}>{likeCount.count}</Typography>
                 </IconButton>
-                <HandlerPostEdit />
+                <Button
+                    variant="outlined"
+                    sx={{color: "#ffffff", borderColor: "#ffffff", fontSize: "1.1rem"}}
+                >
+                    <NavLink
+                        to={`/posts/${post.category}`}
+                        style={{color: "#ffffff", textDecoration: "none"}}
+                    >
+                        목록
+                    </NavLink>
+                </Button>
+                <HandlerPostEdit/>
             </Box>
-            <ReplyReturn />
-            <Reply id="1111" />
+            <ReplyReturn/>
+            <Reply id={id}/>
         </Box>
     );
 }

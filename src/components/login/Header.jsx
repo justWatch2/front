@@ -10,7 +10,7 @@ import {
 } from "@mui/material";
 import CloseIcon from "@mui/icons-material/Close";
 import {useState} from "react";
-import SignUp from "../routes/SignUp.jsx";
+import SignUp from "../login/SignUp";
 
 function Header() {
     const [open, setOpen] = useState(false);

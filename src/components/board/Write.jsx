@@ -1,7 +1,7 @@
-import { useEffect, useState } from "react";
+import {useEffect, useState} from "react";
 import axios from "axios";
-import { NavLink, useLocation, useNavigate, useParams } from "react-router-dom";
-import { Formik, Form, Field, FieldArray } from "formik";
+import {NavLink, useLocation, useNavigate, useParams} from "react-router-dom";
+import {Formik, Form, Field, FieldArray} from "formik";
 import {
     Box,
     Button,
@@ -12,9 +12,10 @@ import {
     FormControl,
     InputLabel,
 } from "@mui/material";
+import {checkToken} from "../../tokenUtils/TokenUtil4Post";
 
 function Write() {
-    const { id } = useParams();
+    const {no} = useParams();
     const location = useLocation();
     const postD = location.state?.postDetail;
     const navigate = useNavigate();
@@ -22,13 +23,13 @@ function Write() {
     const [post, setPost] = useState({
         title: "",
         category: "선택 필수",
-        name: "1111",
+        name: "",
         contents: "",
         fileUrl: [], // 기존 파일과 새 파일
     });
 
     useEffect(() => {
-        if (id !== "new" && postD) {
+        if (no !== "new" && postD) {
             const newPost = {
                 title: postD.title,
                 category: postD.category,
@@ -41,8 +42,22 @@ function Write() {
             };
             setPost(newPost);
             setFileObjects(postD.fileUrl.map(() => null));
+        } else {
+            checkToken({
+                method: 'get',
+                url: 'http://localhost:8080/api/non-member/getMemberId'
+            }).then(res => {
+                const newPost = {
+                    title: "",
+                    category: "선택 필수",
+                    name: res.data.id,
+                    contents: "",
+                    fileUrl: [],
+                }
+                setPost(newPost);
+            })
         }
-    }, [id, postD]);
+    }, [no, postD]);
 
     const handleFileChange = (e, index) => {
         const newFiles = [...fileObjects];
@@ -51,23 +66,27 @@ function Write() {
     };
 
     const backToList = () => {
-        navigate("/posts");
+        if (no === "new") {
+            navigate("/posts/common");
+        } else {
+            navigate("/post/" + no);
+        }
     };
 
     return (
-        <Box sx={{ p: 3, backgroundColor: "#121212", minHeight: "100vh" }}>
+        <Box sx={{p: 3, backgroundColor: "#121212", minHeight: "100vh"}}>
             <Typography
                 variant="h4"
-                sx={{ color: "#ffffff", fontSize: "2.5rem", fontWeight: "bold", mb: 1 }}
+                sx={{color: "#ffffff", fontSize: "2.5rem", fontWeight: "bold", mb: 1}}
             >
                 글 작성
             </Typography>
-            <Typography sx={{ color: "#bbbbbb", fontSize: "1rem", mb: 2 }}>
+            <Typography sx={{color: "#bbbbbb", fontSize: "1rem", mb: 2}}>
                 게시판 &gt; {post.category === "선택 필수" ? "카테고리 선택" : post.category}
             </Typography>
             <Box
-                component="form"
-                sx={{ backgroundColor: "#1e1e1e", p: 2, borderRadius: "4px" }}
+
+                sx={{backgroundColor: "#1e1e1e", p: 2, borderRadius: "4px"}}
             >
                 <Formik
                     initialValues={post}
@@ -79,11 +98,11 @@ function Write() {
                         }
                         return errors;
                     }}
-                    onSubmit={(values, { setSubmitting }) => {
+                    onSubmit={(values, {setSubmitting}) => {
                         setSubmitting(true);
                         const formData = new FormData();
-                        if (id !== "new") {
-                            formData.append("no", Number(id));
+                        if (no !== "new") {
+                            formData.append("no", Number(no));
                         }
                         formData.append("title", values.title);
                         formData.append("category", values.category);
@@ -98,15 +117,17 @@ function Write() {
                             }
                         });
 
-                        delete axios.defaults.headers.post["Content-Type"];
+                        const url = no === "new" ? "/api/addPost" : "/api/updatePost";
+                        const method = no === "new" ? "post" : "put";
 
-                        const url = id === "new" ? "/api/addPost" : "/api/updatePost";
-
-                        axios
-                            .post(url, formData)
+                        checkToken({
+                            method: method,
+                            url: url,
+                            data: formData,
+                        })
                             .then((res) => {
                                 alert(res.data);
-                                navigate("/posts");
+                                navigate("/post/"+no);
                             })
                             .catch((err) => {
                                 alert(err.response?.data || "에러 발생");
@@ -114,42 +135,61 @@ function Write() {
                             .finally(() => setSubmitting(false));
                     }}
                 >
-                    {({ values, errors, touched, isSubmitting }) => (
+                    {({values, errors, touched, isSubmitting}) => (
                         <Form>
-                            <Box sx={{ display: "flex", flexDirection: "column", gap: 2 }}>
+                            <Box sx={{display: "flex", flexDirection: "column", gap: 2}}>
                                 <FormControl>
                                     <InputLabel
-                                        sx={{ color: "#bbbbbb", fontSize: "1.2rem" }}
+                                        sx={{color: "#bbbbbb", fontSize: "1.2rem"}}
                                         shrink
                                     >
                                         게시판 분류
                                     </InputLabel>
                                     <Field as={Select} name="category">
                                         <MenuItem value="선택 필수">선택 필수</MenuItem>
-                                        <MenuItem value="자유">자유</MenuItem>
-                                        <MenuItem value="영화/드라마">영화/드라마</MenuItem>
-                                        <MenuItem value="건의">건의</MenuItem>
+                                        <MenuItem value="common">자유</MenuItem>
+                                        <MenuItem value="md">영화/드라마</MenuItem>
+                                        <MenuItem value="sug">건의</MenuItem>
                                     </Field>
                                     {errors.category && touched.category && (
-                                        <Typography sx={{ color: "red", fontSize: "1rem", mt: 1 }}>
+                                        <Typography sx={{color: "red", fontSize: "1rem", mt: 1}}>
                                             {errors.category}
                                         </Typography>
                                     )}
                                 </FormControl>
 
                                 <Field name="title">
-                                    {({ field }) => (
+                                    {({field}) => (
                                         <TextField
                                             {...field}
                                             label="제목"
                                             variant="outlined"
-                                            InputLabelProps={{ shrink: true }}
+                                            InputLabelProps={{shrink: true}}
                                             sx={{
-                                                "& .MuiInputBase-input": { color: "#ffffff", fontSize: "1.1rem" },
-                                                "& .MuiInputLabel-root": { color: "#bbbbbb", fontSize: "1.2rem" },
+                                                "& .MuiInputBase-input": {color: "#ffffff", fontSize: "1.1rem"},
+                                                "& .MuiInputLabel-root": {color: "#bbbbbb", fontSize: "1.2rem"},
                                                 "& .MuiOutlinedInput-root": {
-                                                    "& fieldset": { borderColor: "#ffffff" },
-                                                    "&:hover fieldset": { borderColor: "#dddddd" },
+                                                    "& fieldset": {borderColor: "#ffffff"},
+                                                    "&:hover fieldset": {borderColor: "#dddddd"},
+                                                },
+                                            }}
+                                        />
+                                    )}
+                                </Field>
+                                <Field name="name">
+                                    {({field}) => (
+                                        <TextField
+                                            {...field}
+                                            label="작성자"
+                                            variant="outlined"
+                                            InputProps={{readOnly: true}}
+                                            InputLabelProps={{shrink: true}}
+                                            sx={{
+                                                "& .MuiInputBase-input": {color: "#ffffff", fontSize: "1.1rem"},
+                                                "& .MuiInputLabel-root": {color: "#bbbbbb", fontSize: "1.2rem"},
+                                                "& .MuiOutlinedInput-root": {
+                                                    "& fieldset": {borderColor: "#ffffff"},
+                                                    "&:hover fieldset": {borderColor: "#dddddd"},
                                                 },
                                             }}
                                         />
@@ -157,20 +197,20 @@ function Write() {
                                 </Field>
 
                                 <Field name="contents">
-                                    {({ field }) => (
+                                    {({field}) => (
                                         <TextField
                                             {...field}
                                             label="내용"
                                             multiline
                                             rows={4}
                                             variant="outlined"
-                                            InputLabelProps={{ shrink: true }}
+                                            InputLabelProps={{shrink: true}}
                                             sx={{
-                                                "& .MuiInputBase-input": { color: "#ffffff", fontSize: "1.1rem" },
-                                                "& .MuiInputLabel-root": { color: "#bbbbbb", fontSize: "1.2rem" },
+                                                "& .MuiInputBase-input": {color: "#ffffff", fontSize: "1.1rem"},
+                                                "& .MuiInputLabel-root": {color: "#bbbbbb", fontSize: "1.2rem"},
                                                 "& .MuiOutlinedInput-root": {
-                                                    "& fieldset": { borderColor: "#ffffff" },
-                                                    "&:hover fieldset": { borderColor: "#dddddd" },
+                                                    "& fieldset": {borderColor: "#ffffff"},
+                                                    "&:hover fieldset": {borderColor: "#dddddd"},
                                                 },
                                             }}
                                         />
@@ -178,30 +218,33 @@ function Write() {
                                 </Field>
 
                                 <FieldArray name="fileUrl">
-                                    {({ insert, remove, push }) => (
-                                        <Box sx={{ display: "flex", flexDirection: "column", gap: 2 }}>
+                                    {({insert, remove, push}) => (
+                                        <Box sx={{display: "flex", flexDirection: "column", gap: 2}}>
                                             {values.fileUrl.map((file, index) => (
                                                 <Box
                                                     key={index}
-                                                    sx={{ display: "flex", gap: 2, alignItems: "center" }}
+                                                    sx={{display: "flex", gap: 2, alignItems: "center"}}
                                                 >
-                                                    <Box sx={{ flexGrow: 1 }}>
+                                                    <Box sx={{flexGrow: 1}}>
                                                         <Typography
-                                                            sx={{ color: "#bbbbbb", fontSize: "1.2rem", mb: 1 }}
+                                                            sx={{color: "#bbbbbb", fontSize: "1.2rem", mb: 1}}
                                                         >
                                                             첨부파일
                                                         </Typography>
                                                         {file.type === "existing" && !fileObjects[index] ? (
-                                                            <Box sx={{ display: "flex", gap: 2, alignItems: "center" }}>
-                                                                <Typography sx={{ color: "#ffffff", fontSize: "1.1rem" }}>
+                                                            <Box sx={{display: "flex", gap: 2, alignItems: "center"}}>
+                                                                <Typography sx={{color: "#ffffff", fontSize: "1.1rem"}}>
                                                                     {file.url}
                                                                 </Typography>
                                                                 <Button
                                                                     variant="outlined"
                                                                     onClick={() => {
                                                                         const updated = [...values.fileUrl];
-                                                                        updated[index] = { type: "new", url: "" };
-                                                                        setPost((prev) => ({ ...prev, fileUrl: updated }));
+                                                                        updated[index] = {type: "new", url: ""};
+                                                                        setPost((prev) => ({
+                                                                            ...prev,
+                                                                            fileUrl: updated
+                                                                        }));
                                                                     }}
                                                                     sx={{
                                                                         color: "#ffffff",
@@ -216,7 +259,7 @@ function Write() {
                                                             <input
                                                                 type="file"
                                                                 onChange={(e) => handleFileChange(e, index)}
-                                                                style={{ color: "#ffffff" }}
+                                                                style={{color: "#ffffff"}}
                                                             />
                                                         )}
                                                     </Box>
@@ -228,7 +271,7 @@ function Write() {
                                                             setFileObjects(updatedFiles);
                                                             const updatedUrls = [...values.fileUrl];
                                                             updatedUrls.splice(index, 1);
-                                                            setPost((prev) => ({ ...prev, fileUrl: updatedUrls }));
+                                                            setPost((prev) => ({...prev, fileUrl: updatedUrls}));
                                                         }}
                                                         sx={{
                                                             backgroundColor: "#333333",
@@ -243,7 +286,7 @@ function Write() {
                                             <Button
                                                 variant="contained"
                                                 onClick={() => {
-                                                    push({ type: "new", url: "" });
+                                                    push({type: "new", url: ""});
                                                     setFileObjects([...fileObjects, null]);
                                                 }}
                                                 sx={{
@@ -259,7 +302,7 @@ function Write() {
                                     )}
                                 </FieldArray>
 
-                                <Box sx={{ display: "flex", gap: 2, mt: 2 }}>
+                                <Box sx={{display: "flex", gap: 2, mt: 2}}>
                                     <Button
                                         type="submit"
                                         variant="contained"
