@@ -49,6 +49,9 @@ function App() {
     };
 
     const handleSearch = async () => {
+        if(inputValue.length==0){
+            return;
+        }
         if (controllerRef.current) {
             controllerRef.current.abort();
         }
@@ -168,7 +171,7 @@ function App() {
                 </div>
 
                 {saveValue && (
-                    <h4 className={styles.resultTitle}>🔍 "{saveValue}"의 검색 결과</h4>
+                    <h4 className={styles.resultTitle}>🔍 &quot;{saveValue}&quot;의 검색 결과</h4>
                 )}
 
                 <Result list={results} setFilter={setFilterState} />
