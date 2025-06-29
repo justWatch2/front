@@ -1,0 +1,20 @@
+.side-menu {
+    position: fixed;
+    top: 0;
+    right: 0;
+    width: 200px;
+    height: 100vh;
+    padding-top: 60px;
+    transition: transform 0.3s ease-in-out;
+    z-index: 999;
+}
+
+/* 메뉴 숨김 상태 */
+.hide-menu {
+    transform: translateX(100%);
+}
+
+/* 메뉴 보임 상태 */
+.show-menu {
+    transform: translateX(0);
+}
