@@ -1,40 +1,22 @@
 import React from "react";
-import {autoRefreshCheck} from "../../tokenUtils/TokenUtils";
 import KakaoFriendInvite from "./KakaoInviteButton";
+// 기존 CSS 파일을 그대로 사용합니다.
 
-function ProfileDropdown({onLogout}) {
+// 부모(Nav)로부터 onLogout 함수를 props로 받습니다.
+function ProfileDropdown({ onLogout }) {
 
-    //로그아웃
-    async function onLogout() {
-        const token = localStorage.getItem("jwt");
-
-        if (!token) {
-            alert("로그인된 상태가 아닙니다.");
-            return;
-        }
-        try {
-            await autoRefreshCheck({
-                method: "POST",
-                url: "http://localhost:8080/api/logout",
-            });
-            localStorage.removeItem("jwt");
-            alert("로그아웃 완료!");
-            window.location.href = "/";
-        } catch (error) {
-            console.error("로그아웃 실패:", error);
-            alert("로그아웃 중 오류 발생");
-        }
-    }
-
+    // 내부에 별도의 로그아웃 로직은 없습니다.
 
     return (
+        // [복원] 기존 UI 구조를 그대로 사용합니다.
         <div className="profile-dropdown">
-            <button className="dropdown-item" onClick={() => console.log("마이페이지로 이동")}>
+            <button className="dropdown-item" onClick={() => alert("마이페이지로 이동")}>
                 마이페이지
             </button>
 
-            <KakaoFriendInvite/>
+            <KakaoFriendInvite />
 
+            {/* [핵심] 로그아웃 버튼 클릭 시, props로 받은 onLogout 함수를 실행합니다. */}
             <button className="dropdown-item" onClick={onLogout}>
                 로그아웃
             </button>

@@ -1,71 +1,88 @@
-/* src/styles/MemberModeFilters.css */
+/* src/styles/MemberModelFilters.css */
 
-/* 회원 모드 필터 컨테이너 */
+/* 배경 움직임 애니메이션 키프레임 (컨테이너용) */
+@keyframes netflixIntroBackground {
+    0% { background-position: 0% 0%; }
+    50% { background-position: 100% 100%; }
+    100% { background-position: 0% 0%; }
+}
+
+/* [추가] 버튼 후광 애니메이션 키프레임 */
+@keyframes buttonHaloPulse {
+    from { box-shadow: 0 0 6px rgba(255, 255, 255, 0.5); }
+    to { box-shadow: 0 0 14px rgba(255, 255, 255, 0.8); }
+}
+
+/* 회원 모드 필터 컨테이너 (마음에 들어 하신 배경 유지) */
 .member-mode-filters {
     display: flex;
     justify-content: center;
     align-items: flex-start;
-    gap: 30px;
-    margin-top: 20px;
-    margin-bottom: 30px;
-    padding: 15px 50px;
+    gap: 40px; /* 그룹 간 간격 조정 */
+    margin: 20px auto 30px auto;
+    padding: 20px 50px;
     border-radius: 8px;
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.5);
     flex-wrap: wrap;
-    overflow: hidden;
-    position: relative; /* 자식 요소 z-index 기준 */
-
-    /* 넷플릭스 시작 화면과 유사한 배경 그라데이션 */
-    background: radial-gradient(
-            ellipse at center, /* 중앙에서 퍼지는 타원형 그라데이션 */
-            rgba(190, 30, 30, 0.99) 0%, /* 중앙은 넷플릭스 빨간색의 옅은 버전 */
-            rgba(108, 23, 25, 0.91) 25%, /* 조금 더 퍼지면서 옅어짐 */
-            rgba(20, 20, 20, 1) 75%, /* 바깥쪽은 거의 검은색 */
-            #000000 100% /* 가장 바깥쪽은 완전 검은색 */
-    );
-    background-size: 150% 150%; /* 그라데이션 크기를 키워 미묘하게 보이도록 */
-    background-position: center; /* 중앙 정렬 */
-    animation: netflixIntroBackground 10s ease-in-out infinite alternate; /* 은은하게 움직이는 애니메이션 */
-
-    /* 기존에 있던 줄무늬 배경 관련 스타일 제거 */
-    /* background: linear-gradient( ... ); */
-    /* background-size: 200px 100%; */
-    /* background-position: 0% 0%; */
-    /* animation: slideBackground 20s linear infinite; */
-}
-
-/* 넷플릭스 시작 화면 배경 움직임 애니메이션 키프레임 */
-@keyframes netflixIntroBackground {
-    0% { background-position: 0% 0%; }
-    50% { background-position: 100% 100%; } /* 대각선으로 움직였다 돌아오도록 */
-    100% { background-position: 0% 0%; }
-}
-
-
-/* ... (나머지 filter-group, label, button-group, genre-item 스타일 유지) ... */
-
-
-
-/* 배경 움직임 애니메이션 키프레임 */
-@keyframes slideBackground {
-    from { background-position: 0% 0%; }
-    to { background-position: 100% 0%; } /* 배경을 오른쪽으로 이동 */
-}
-
-
-/* ... (나머지 filter-group, label, button-group, genre-item 스타일 유지) ... */
-
-/* genre-item 내부 텍스트와 아이콘의 z-index를 높여 배경 위에 보이도록 */
-.filter-group label, .button-group .genre-item {
     position: relative;
-    z-index: 2; /* 배경 위에 오도록 */
-    /* 필요하다면 text-shadow를 더 강하게 줄 수 있습니다. */
-    text-shadow: 0 0 5px rgba(0,0,0,0.8);
+    background: radial-gradient(ellipse at center, rgba(190, 30, 30, 0.8) 0%, rgba(108, 23, 25, 0.8) 25%, rgba(20, 20, 20, 1) 75%, #000 100%);
+    background-size: 150% 150%;
+    background-position: center;
+    animation: netflixIntroBackground 10s ease-in-out infinite alternate;
 }
 
-/* genre-item 내부 텍스트와 아이콘의 z-index를 높여 배경 위에 보이도록 */
-.filter-group label, .button-group .genre-item {
-    position: relative;
-    z-index: 2; /* 배경 위에 오도록 */
-    text-shadow: 0 0 5px rgba(0,0,0,0.8); /* 텍스트 그림자 */
+/* 개별 필터 그룹 */
+.filter-group {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    align-items: center;
+}
+
+/* [수정] 레이블(텍스트) 스타일: 가독성 개선 */
+.filter-group label {
+    font-size: 1rem;
+    color: #e0e0e0; /* 더 밝은 회색으로 변경 */
+    font-weight: 600;
+    text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.7); /* 그림자를 단순화하여 깔끔하게 */
+}
+
+/* 버튼들을 감싸는 그룹 */
+.button-group {
+    display: flex;
+    gap: 10px;
+}
+
+/* [수정] 필터 버튼 스타일: 요청하신 '하얀색 후광' 적용 */
+.filter-button {
+    padding: 8px 18px;
+    border-radius: 5px;
+    background: #333;
+    color: #fff;
+    font-size: 0.9rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all .2s ease-in-out;
+    border: 1px solid #555;
+    /* 하얀색 후광 애니메이션 적용 */
+    box-shadow: 0 0 6px rgba(255, 255, 255, 0.5);
+    animation: buttonHaloPulse 2s infinite alternate ease-in-out;
+}
+
+/* 버튼 호버 효과 */
+.filter-button:hover:not(.selected) {
+    background: #4d4d4d;
+    border-color: #eee;
+    transform: translateY(-2px); /* 살짝 떠오르는 효과 */
+}
+
+/* 선택된 버튼 스타일 */
+.filter-button.selected {
+    background: #e50914; /* 선택 시 넷플릭스 빨강 */
+    border-color: #e50914;
+    color: #fff;
+    font-weight: 700;
+    transform: scale(1.05);
+    /* 선택 시에는 후광 애니메이션 중지 */
+    animation: none;
+    box-shadow: 0 0 15px rgba(229, 9, 20, 0.6); /* 대신 빨간색 그림자 */
 }
