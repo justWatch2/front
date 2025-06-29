@@ -1,0 +1,55 @@
+/* src/styles/RecommendReal.css (모든 전역 스타일 포함) */
+
+/* --- HTML, BODY 기본 리셋 --- */
+
+
+*, *::before, *::after { /* 모든 요소에 box-sizing 초기화 */
+  box-sizing: inherit;
+}
+
+/* 폰트 렌더링 최적화 */
+body {
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+code { /* code 태그 기본 스타일 */
+  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
+  monospace;
+}
+
+/* --- 앱 전체 컨테이너 스타일 --- */
+/* RecommendReal.js의 <div className="app">에 적용됩니다. */
+/*.app {*/
+/*  display: flex;*/
+/*  flex-direction: column;*/
+/*  min-height: 100vh; !* 뷰포트 전체 높이 *!*/
+/*  background-color: #141414; !* 넷플릭스 기본 배경색 (앱 전체 배경) *!*/
+/*  color: #e5e5e5; !* 기본 텍스트 색상 (앱 전체 텍스트) *!*/
+/*  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',*/
+/*  'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',*/
+/*  sans-serif; !* 앱 전체 기본 폰트 패밀리 *!*/
+/*  position: relative; !* 자식 fixed 요소의 기준이 되지 않도록 주의 (z-index용) *!*/
+/*  overflow-x: hidden; !* 가로 스크롤 방지 *!*/
+/*}*/
+
+/* --- 뒤에서 은은하게 움직이는 빨간 빛 애니메이션 배경 제거 --- */
+/* .app::before { ... } */
+/* @keyframes glowMove { ... } */
+
+
+/* --- 페이지 콘텐츠 영역 (Header와 겹치지 않도록 조정) --- */
+/* <div className="page-content">에 적용됩니다. */
+/*.page-content {*/
+/*  flex: 1; !* 남은 공간 차지 *!*/
+/*  padding-top: 150px; !* Header의 실제 높이보다 약간 크게 설정 *!*/
+/*  padding-left: 0px;*/
+/*  padding-right: 0px;*/
+/*  padding-bottom: 0px;*/
+/*  position: relative; !* 자식 fixed 요소의 기준이 되지 않도록 주의 *!*/
+/*  z-index: 1; !* Header 아래 오도록 *!*/
+/*}*/
+
+/* Header 관련 스타일들은 Header.css에만 있어야 합니다. */
+/* MainContent 관련 스타일들은 MainContent.css에서 관리됩니다. */
+/* MovieModal 관련 스타일들은 MovieModal.css에서 관리됩니다. */
