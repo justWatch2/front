@@ -1,12 +1,11 @@
 import axios from "axios";
 
-export async function autoRefreshCheck(config) {
+ export async function autoRefreshCheck(config) {
     try {
         // 1차 시도
         const token = localStorage.getItem("jwt");
 
         if (!token) {
-            alert("로그인이 필요합니다 로그인해주세요!!!");
             return null;
         }
 
@@ -32,6 +31,7 @@ export async function autoRefreshCheck(config) {
                     { withCredentials: true }
                 );
 
+                
                 const newToken = refreshRes.headers["authorization"];
                 if (!newToken) throw new Error("재발급 실패");
 

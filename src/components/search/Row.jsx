@@ -30,7 +30,7 @@ export default function Row({ data,title,fetchUrl}){
                             className={`detail_row__poster`}
                             src={movie.profile_path!=null?fetchUrl+movie.profile_path:poster}
                             alt={movie.title}
-                            />{movie.name}</div>:<></>
+                            /><p className="datail_p">{movie.name}</p></div>:<></>
                     ))}
                 </div>
                 <div className="detail_slider__arrow-right"  onClick={() => {

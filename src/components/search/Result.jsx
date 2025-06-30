@@ -83,7 +83,7 @@ function Result({list,setFilter}){
     return (
         <div>
             {isNull ? (
-                <p className={styles.resultEmpty}></p>
+                <p>검색결과가 없습니다.</p>
             ) : (
                 //<div>{movieList}</div>
                 <div className={styles.resultContainer}>

@@ -30,8 +30,6 @@ const MainContent = () => {
         selectedCategory,
         setSelectedCategory,
         isLoading,
-        setIsLoading,
-        userId,
         isMemberModeActive,
         // Context에서 가져오던 selectedMediaType, selectedRegion, selectedAgeRating 및 setter 함수들은
         // 이제 MemberModeFilters 컴포넌트 내부에서 직접 사용하므로 MainContent에서는 제거

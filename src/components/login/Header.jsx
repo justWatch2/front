@@ -1,4 +1,4 @@
-import logo from "../assets/content.png";
+import logo from "../assets/logogo.png";
 import {Link as RouterLink} from "react-router-dom";
 import {
     AppBar,
@@ -6,9 +6,9 @@ import {
     Typography,
     Box,
     Modal,
-    IconButton,
+
 } from "@mui/material";
-import CloseIcon from "@mui/icons-material/Close";
+
 import {useState} from "react";
 import SignUp from "../routes/SignUp.jsx";
 
