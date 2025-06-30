@@ -57,6 +57,7 @@ function App() {
             onLogout={handleLogout}
             onProfileClick={handleProfileClick}
             showProfileDropdown={showProfileDropdown}
+            setIsLoggedIn2={setIsLoggedIn2}
         />
         <Routes>
           <Route path="/" element={<Main/>}></Route>

@@ -10,7 +10,7 @@ import {
     Select,
     MenuItem,
     FormControl,
-    InputLabel,
+    InputLabel, Divider,
 } from "@mui/material";
 import {checkToken} from "../../tokenUtils/TokenUtil4Post";
 
@@ -61,8 +61,9 @@ function Write() {
 
     const handleFileChange = (e, index) => {
         const newFiles = [...fileObjects];
-        newFiles[index] = e.currentTarget.files[0];
+        newFiles[index] = e.target.files[0]; // 파일 객체 저장
         setFileObjects(newFiles);
+        console.log("Selected file:", newFiles[index]); // 디버깅용
     };
 
     const backToList = () => {
@@ -74,18 +75,25 @@ function Write() {
     };
 
     return (
-        <Box sx={{p: 3, backgroundColor: "#121212", minHeight: "100vh"}}>
-            <Typography
-                variant="h4"
-                sx={{color: "#ffffff", fontSize: "2.5rem", fontWeight: "bold", mb: 1}}
-            >
-                글 작성
-            </Typography>
-            <Typography sx={{color: "#bbbbbb", fontSize: "1rem", mb: 2}}>
-                게시판 &gt; {post.category === "선택 필수" ? "카테고리 선택" : post.category}
-            </Typography>
+        <Box sx={{
+            p: 3, minHeight: "100vh",
+            width: "80%",
+            mx: "auto",
+            color: "#ffffff"
+        }}>
+            <Box sx={{
+                display: 'flex',
+                alignItems: 'center',
+                width: '100%',
+                border: '2px solid #ffffff',
+                mb: 2,
+                borderRadius: '4px'
+            }}>
+                <Typography variant="h4" sx={{color: "#ffffff", padding: '10px', display: 'inline-block'}}>
+                    글 작성
+                </Typography>
+            </Box>
             <Box
-
                 sx={{backgroundColor: "#1e1e1e", p: 2, borderRadius: "4px"}}
             >
                 <Formik
@@ -95,6 +103,9 @@ function Write() {
                         const errors = {};
                         if (!values.category || values.category === "선택 필수") {
                             errors.category = "카테고리를 선택하세요.";
+                        }
+                        if (!values.title || values.title.trim() === "") {
+                            errors.title = "제목을 입력하세요.";
                         }
                         return errors;
                     }}
@@ -127,7 +138,7 @@ function Write() {
                         })
                             .then((res) => {
                                 alert(res.data);
-                                navigate("/post/"+no);
+                                navigate("/post/" + no);
                             })
                             .catch((err) => {
                                 alert(err.response?.data || "에러 발생");
@@ -140,24 +151,76 @@ function Write() {
                             <Box sx={{display: "flex", flexDirection: "column", gap: 2}}>
                                 <FormControl>
                                     <InputLabel
-                                        sx={{color: "#bbbbbb", fontSize: "1.2rem"}}
+                                        sx={{
+                                            backgroundColor: "#1e1e1e",
+                                            color: "#bbbbbb",
+                                            fontSize: "1.2rem",
+                                            transform: "translate(14px, 12px) scale(1)",
+                                            "&.Mui-focused": {
+                                                color: "#bbbbbb",
+                                                transform: "translate(14px, -6px) scale(0.75)",
+                                            },
+                                            "&.MuiInputLabel-shrink": {
+                                                transform: "translate(14px, -10px) scale(0.75)",
+                                            },
+                                            zIndex: 1,
+                                        }}
                                         shrink
                                     >
                                         게시판 분류
                                     </InputLabel>
-                                    <Field as={Select} name="category">
+                                    <Field
+                                        as={Select}
+                                        name="category"
+                                        sx={{
+                                            "& .MuiSelect-select": {
+                                                color: "#ffffff !important",
+                                                padding: "16px 14px",
+                                            },
+                                            "& .MuiOutlinedInput-notchedOutline": {
+                                                borderColor: "#ffffff !important",
+                                            },
+                                            "&:hover .MuiOutlinedInput-notchedOutline": {
+                                                borderColor: "#dddddd !important",
+                                            },
+                                            "& .MuiSvgIcon-root": {
+                                                color: "#ffffff !important",
+                                            },
+                                            "& .MuiOutlinedInput-root": {
+                                                paddingTop: "12px",
+                                                paddingBottom: "12px",
+                                            },
+                                        }}
+                                        MenuProps={{
+                                            PaperProps: {
+                                                sx: {
+                                                    backgroundColor: "#1e1e1e",
+                                                    "& .MuiMenuItem-root": {
+                                                        color: "#ffffff",
+                                                        backgroundColor: "#1e1e1e",
+                                                        "&:hover": {
+                                                            backgroundColor: "#333333", // 호버 시 배경색 (선택적)
+                                                        },
+                                                        "&.Mui-selected": {
+                                                            backgroundColor: "#333333", // 선택된 항목 배경색 (선택적)
+                                                            color: "#ffffff",
+                                                        },
+                                                    },
+                                                },
+                                            },
+                                        }}
+                                    >
                                         <MenuItem value="선택 필수">선택 필수</MenuItem>
                                         <MenuItem value="common">자유</MenuItem>
                                         <MenuItem value="md">영화/드라마</MenuItem>
                                         <MenuItem value="sug">건의</MenuItem>
                                     </Field>
                                     {errors.category && touched.category && (
-                                        <Typography sx={{color: "red", fontSize: "1rem", mt: 1}}>
+                                        <Typography sx={{color: "#ff4444", fontSize: "1rem", mt: 1}}>
                                             {errors.category}
                                         </Typography>
                                     )}
                                 </FormControl>
-
                                 <Field name="title">
                                     {({field}) => (
                                         <TextField
@@ -173,6 +236,12 @@ function Write() {
                                                     "&:hover fieldset": {borderColor: "#dddddd"},
                                                 },
                                             }}
+                                            error={touched.title && !!errors.title}
+                                            helperText={touched.title && errors.title && (
+                                                <Typography sx={{color: "#ff4444", fontSize: "1rem"}}>
+                                                    {errors.title}
+                                                </Typography>
+                                            )}
                                         />
                                     )}
                                 </Field>
@@ -219,18 +288,48 @@ function Write() {
 
                                 <FieldArray name="fileUrl">
                                     {({insert, remove, push}) => (
-                                        <Box sx={{display: "flex", flexDirection: "column", gap: 2}}>
+                                        <Box
+                                            sx={{
+                                                display: "flex",
+                                                gap: 2,
+                                                flexDirection: "column",
+                                                border: "1px solid #ffffff",
+                                                borderRadius: "4px",
+                                                padding: "4px 8px",
+                                            }}
+                                        >
+
+                                            <InputLabel
+                                                sx={{
+                                                    display: "block",
+                                                    backgroundColor: "#1e1e1e",
+                                                    // backgroundColor: "transparent",
+                                                    color: "#bbbbbb",
+                                                    fontSize: "1.2rem",
+                                                    width: "75px",
+                                                    transform: "translate(14px, 12px) scale(1)",
+                                                    "&.Mui-focused": {
+                                                        color: "#bbbbbb",
+                                                        transform: "translate(14px, -6px) scale(0.75)",
+                                                    },
+                                                    "&.MuiInputLabel-shrink": {
+                                                        transform: "translate(2px, -15px) scale(0.75)",
+                                                        maxWidth: "calc(100% - 20px)",
+                                                    },
+                                                    zIndex: 1,
+                                                }}
+                                                shrink
+                                            >
+                                                첨부파일
+                                            </InputLabel>
+
                                             {values.fileUrl.map((file, index) => (
                                                 <Box
                                                     key={index}
-                                                    sx={{display: "flex", gap: 2, alignItems: "center"}}
+                                                    sx={{display: "flex", gap: 2, alignItems: "center", ml: "10px",}}
                                                 >
-                                                    <Box sx={{flexGrow: 1}}>
-                                                        <Typography
-                                                            sx={{color: "#bbbbbb", fontSize: "1.2rem", mb: 1}}
-                                                        >
-                                                            첨부파일
-                                                        </Typography>
+                                                    <Box sx={{flexGrow: 1, maxWidth: "300px"}}>
+
                                                         {file.type === "existing" && !fileObjects[index] ? (
                                                             <Box sx={{display: "flex", gap: 2, alignItems: "center"}}>
                                                                 <Typography sx={{color: "#ffffff", fontSize: "1.1rem"}}>
@@ -247,40 +346,95 @@ function Write() {
                                                                         }));
                                                                     }}
                                                                     sx={{
+                                                                        backgroundColor: "#333333",
                                                                         color: "#ffffff",
-                                                                        borderColor: "#ffffff",
-                                                                        fontSize: "1.1rem",
+                                                                        fontSize: "0.9rem",
+                                                                        padding: "4px 8px",
+                                                                        borderRadius: "4px",
+                                                                        minWidth: "30px",
+                                                                        height: "40px",
                                                                     }}
                                                                 >
-                                                                    파일 삭제
+                                                                    X
                                                                 </Button>
                                                             </Box>
                                                         ) : (
-                                                            <input
-                                                                type="file"
-                                                                onChange={(e) => handleFileChange(e, index)}
-                                                                style={{color: "#ffffff"}}
-                                                            />
+                                                            <Box sx={{position: "relative", width: "100%"}}>
+                                                                <input
+                                                                    type="file"
+                                                                    onChange={(e) => handleFileChange(e, index)}
+                                                                    style={{
+                                                                        opacity: 0,
+                                                                        position: "absolute",
+                                                                        top: 0,
+                                                                        left: 0,
+                                                                        width: "100%",
+                                                                        height: "100%",
+                                                                        cursor: "pointer",
+                                                                        zIndex: 1,
+                                                                    }}
+                                                                />
+                                                                <TextField
+                                                                    variant="outlined"
+                                                                    placeholder="파일 선택"
+                                                                    value={fileObjects[index]?.name || ""}
+                                                                    InputProps={{
+                                                                        readOnly: true,
+                                                                        sx: {
+                                                                            color: "#ffffff",
+                                                                            fontSize: "1.1rem",
+                                                                            "& .MuiOutlinedInput-notchedOutline": {
+                                                                                borderColor: "#ffffff",
+                                                                            },
+                                                                            "&:hover .MuiOutlinedInput-notchedOutline": {
+                                                                                borderColor: "#dddddd",
+                                                                            },
+                                                                        },
+                                                                    }}
+                                                                    InputLabelProps={{shrink: true}}
+                                                                    sx={{
+                                                                        width: "100%",
+                                                                        "& .MuiInputLabel-root": {
+                                                                            color: "#bbbbbb",
+                                                                            fontSize: "1.2rem"
+                                                                        },
+                                                                    }}
+                                                                />
+                                                                <Button
+                                                                    variant="contained"
+                                                                    onClick={() => {
+                                                                        const updatedFiles = [...fileObjects];
+                                                                        updatedFiles.splice(index, 1);
+                                                                        setFileObjects(updatedFiles);
+                                                                        const updatedUrls = [...values.fileUrl];
+                                                                        updatedUrls.splice(index, 1);
+                                                                        setPost((prev) => ({
+                                                                            ...prev,
+                                                                            fileUrl: updatedUrls
+                                                                        }));
+                                                                    }}
+                                                                    sx={{
+                                                                        backgroundColor: "#333333",
+                                                                        color: "#ffffff",
+                                                                        fontSize: "0.9rem",
+                                                                        padding: "4px 8px",
+                                                                        borderRadius: "4px",
+                                                                        minWidth: "30px",
+                                                                        height: "40px",
+                                                                        position: "absolute",
+                                                                        right: "8px",
+                                                                        top: "50%",
+                                                                        transform: "translateY(-50%)",
+                                                                    }}
+                                                                >
+                                                                    X
+                                                                </Button>
+                                                            </Box>
                                                         )}
+                                                        <Divider sx={{backgroundColor: "#5e5e5e", my: 1}}/>
+
                                                     </Box>
-                                                    <Button
-                                                        variant="contained"
-                                                        onClick={() => {
-                                                            const updatedFiles = [...fileObjects];
-                                                            updatedFiles.splice(index, 1);
-                                                            setFileObjects(updatedFiles);
-                                                            const updatedUrls = [...values.fileUrl];
-                                                            updatedUrls.splice(index, 1);
-                                                            setPost((prev) => ({...prev, fileUrl: updatedUrls}));
-                                                        }}
-                                                        sx={{
-                                                            backgroundColor: "#333333",
-                                                            color: "#ffffff",
-                                                            fontSize: "1.1rem",
-                                                        }}
-                                                    >
-                                                        X
-                                                    </Button>
+
                                                 </Box>
                                             ))}
                                             <Button
@@ -298,6 +452,7 @@ function Write() {
                                             >
                                                 첨부파일 추가
                                             </Button>
+                                            <br />
                                         </Box>
                                     )}
                                 </FieldArray>
@@ -311,9 +466,14 @@ function Write() {
                                             backgroundColor: "#333333",
                                             color: "#ffffff",
                                             fontSize: "1.1rem",
+                                            '&:hover': {
+                                                backgroundColor: "#ffffff",
+                                                color: "#000000",
+                                            }
                                         }}
+
                                     >
-                                        등록
+                                        {no === "new" ? '등록' : '수정'}
                                     </Button>
                                     <Button
                                         variant="outlined"
@@ -322,6 +482,14 @@ function Write() {
                                             color: "#ffffff",
                                             borderColor: "#ffffff",
                                             fontSize: "1.1rem",
+                                            '&:hover': {
+                                                backgroundColor: "#ffffff !important",
+                                                color: "#000000 !important",
+                                                borderColor: "#ffffff !important",
+                                                '& a': {
+                                                    color: "#000000 !important",
+                                                },
+                                            },
                                         }}
                                     >
                                         뒤로가기
