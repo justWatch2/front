@@ -45,7 +45,7 @@ function Write() {
         } else {
             checkToken({
                 method: 'get',
-                url: 'http://localhost:8080/api/non-member/getMemberId'
+                url: '/api/non-member/getMemberId'
             }).then(res => {
                 const newPost = {
                     title: "",
@@ -90,7 +90,7 @@ function Write() {
                 borderRadius: '4px'
             }}>
                 <Typography variant="h4" sx={{color: "#ffffff", padding: '10px', display: 'inline-block'}}>
-                    글 작성
+                    글 {no === "new" ? '등록' : '수정'}
                 </Typography>
             </Box>
             <Box
@@ -350,9 +350,14 @@ function Write() {
                                                                         color: "#ffffff",
                                                                         fontSize: "0.9rem",
                                                                         padding: "4px 8px",
+                                                                        borderColor:"#333333",
                                                                         borderRadius: "4px",
                                                                         minWidth: "30px",
                                                                         height: "40px",
+                                                                        '&:hover': {
+                                                                            backgroundColor: "#f44336",
+                                                                            borderColor: "#f44336",
+                                                                        }
                                                                     }}
                                                                 >
                                                                     X

@@ -28,6 +28,9 @@ function Posts() {
     const [category, setCategory] = useState(cat);
     const [posts, setPosts] = useState([]);
     const [tops, setTops] = useState([]);
+    useEffect(()=>{
+        setCategory(cat);
+    })
 
     useEffect(() => {
         console.log("Category:", cat);
@@ -154,7 +157,9 @@ function Posts() {
                         key={index}
                         label={cat.name}
                         clickable
-                        onClick={() => setCategory(cat.value)}
+                        onClick={() => {
+                            navigate(`/posts/${cat.value}`)
+                        }}
                         color={category === cat.value ? "primary" : "default"}
                         sx={{
                             backgroundColor: category === cat.value ? "#ffffff" : "#2e2e2e",
@@ -225,7 +230,8 @@ function Posts() {
                 mb: 2,
                 borderRadius: '4px'
             }}>
-                <Typography variant="h4" sx={{color: "#ffffff", padding: '10px', display: 'inline-block'}}>
+                <Typography variant="h4"
+                            sx={{color: "#ffffff", padding: '10px', display: 'inline-block', fontWeight: 'bold'}}>
                     {categoryNames[category || 'common']}게시판
                 </Typography>
             </Box>
@@ -254,7 +260,6 @@ function Posts() {
                 width: "100%",
                 borderRadius: '4px',
                 border: '1px solid #ffffff'
-
             }}>
                 <Table>
                     <TableHead>
@@ -295,12 +300,22 @@ function Posts() {
                             }}>조회수</TableCell>
                         </TableRow>
                     </TableHead>
-                    <TableBody>
+                    <TableBody sx={{}}>
                         {tops.map((post, index) => (
                             <TableRow key={'top' + index}
-                                      sx={{backgroundColor: "#292929", borderTop: '2px solid #ffffff'}}>
-                                <TableCell sx={{color: "#f44336", fontWeight: 'bold'}}>[Top]</TableCell>
-                                <TableCell sx={{color: "#ffffff", fontWeight: 'bold'}}>
+                                      sx={{
+                                          backgroundColor: "#292929",
+                                          borderTop: '2px solid #ffffff',
+                                          borderRadius: "2px",
+                                      }}>
+                                <TableCell sx={{color: "#f44336", fontWeight: 'bold',}}>[Top]</TableCell>
+                                <TableCell sx={{
+                                    color: "#ffffff",
+                                    fontWeight: 'bold',
+                                    '&:hover': {
+                                        textDecoration: 'underline',
+                                    },
+                                }}>
                                     <NavLink to={`/post/${post.no}`} style={{color: "#ffffff", textDecoration: "none"}}>
                                         {post.title}
                                     </NavLink>
@@ -313,7 +328,12 @@ function Posts() {
                         {posts.map((post, index) => (
                             <TableRow key={index} sx={{backgroundColor: "#3e3e3e"}}>
                                 <TableCell sx={{color: "#ffffff"}}>{post.no}</TableCell>
-                                <TableCell sx={{color: "#ffffff"}}>
+                                <TableCell sx={{
+                                    color: "#ffffff",
+                                    '&:hover': {
+                                        textDecoration: 'underline',
+                                    },
+                                }}>
                                     <NavLink to={`/post/${post.no}`} style={{color: "#ffffff", textDecoration: "none"}}>
                                         {post.title}
                                     </NavLink>

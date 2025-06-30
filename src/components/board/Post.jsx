@@ -46,7 +46,7 @@ function Post() {
     useEffect(() => {
         checkToken({
             method: "get",
-            url: `http://localhost:8080/api/non-member/getPost?no=${postNo}`
+            url: `/api/non-member/getPost?no=${postNo}`
         })
             .then((res) => {
                 const newPost = {
@@ -95,7 +95,7 @@ function Post() {
         formData.append("memberId", id);
         checkToken({
             method: "put",
-            url: "http://localhost:8080/api/likeReply",
+            url: "/api/likeReply",
             data: formData,
         }).then((res) => {
             if (res.data === "success") {
@@ -123,7 +123,7 @@ function Post() {
         formData.append("memberId", id);
         checkToken({
             method: "put",
-            url: "http://localhost:8080/api/likePost",
+            url: "/api/likePost",
             data: formData,
         }).then((res) => {
             if (res.data === "success") {
@@ -242,7 +242,7 @@ function Post() {
                         formData.append("contents", values.contents);
                         checkToken({
                             method: 'post',
-                            url: 'http://localhost:8080/api/saveReply',
+                            url: 'api/saveReply',
                             data: formData
                         }).then((res) => {
                             alert(res.data);
