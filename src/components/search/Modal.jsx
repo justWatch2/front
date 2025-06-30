@@ -28,12 +28,23 @@ export const ModalBackdrop = styled.div`
 `;
 
 export const ModalBtn = styled.input`
-    background-color: #111;
+    background-color: #000;
     text-decoration: none;
     border: 1px solid #444;
     padding: 20px;
     color: white;
     cursor: grab;
+    border-radius: 5px;
+    transition: 0.3s;
+  &:hover {
+    border: 1px solid #b31f2b;
+    color: white;
+    transition: 0.3s;
+  }
+    &:focus {
+     background-color:  #b31f2b;
+    transition: 0.3s;
+  }
 `;
 
 export const SelectTag = styled.span`
@@ -81,7 +92,7 @@ export const ExitBtn = styled.button`
     align-items: center;
 `;
 
-export const ModalView = styled.div.attrs((props) => ({
+export const ModalView = styled.div.attrs(() => ({
     // attrs 메소드를 이용해서 아래와 같이 div 엘리먼트에 속성을 추가할 수 있다.
     role: 'dialog',
 }))`
@@ -105,13 +116,13 @@ export const ModalView = styled.div.attrs((props) => ({
 
 export const Modal = ({filterState, setFilterState}) => {
     const [isOpen, setIsOpen] = useState(false);
-    const {genres, adult, years, korea} = filterState;
-
+    const {genres, adult, korea} = filterState;
+    //const {genres, adult,years, korea} = filterState;
     const openModalHandler = () => {
         setIsOpen(prev => !prev);
     };
 
-    const tagClickALL = (e) => {
+    const tagClickALL = () => {
         // const nextGenres = genres.slice();
         // let Flag=nextGenres.some((genre)=>!genre.select)
         //

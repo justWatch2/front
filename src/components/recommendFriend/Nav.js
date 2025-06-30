@@ -10,14 +10,12 @@ import "../recommendMain/styles/Header.css";
 import profileLogo from "./img/ProfileLogo.png";
 
 export default function Nav({
-                              onClickRecommend,
                               isLoggedIn2,
                               onLoginClick,
                               onLogout,
                               onProfileClick,
                               showProfileDropdown,
                             }) {
-    const [search, setSearch] = useState("");
   const [show, setShow] = useState(false);
   const [showLoginDropdown, setShowLoginDropdown] = useState(false);
     const navigate = useNavigate();
@@ -26,7 +24,6 @@ export default function Nav({
         clearRecommendations,
         isLoggedIn,
         setIsLoggedIn,
-        userId,
         setUserId,
         isMemberModeActive,
         setIsMemberModeActive

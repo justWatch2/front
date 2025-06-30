@@ -1,5 +1,4 @@
 import React, { useContext, useEffect } from 'react';
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 
 // --- 컴포넌트 임포트 ---
 import MainContent from './components/recommendMain/components/MainContent';

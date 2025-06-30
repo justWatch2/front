@@ -160,3 +160,11 @@ img{
     font-size: 1.3rem !important;
     font-weight: 600 !important;
 }
+.datail_p {
+  width: 100px;              /* 부모 요소 너비에 맞춤 */
+  word-wrap: break-word;    /* 단어 길이가 길어도 줄바꿈 */
+  overflow-wrap: break-word;
+  white-space: normal;      /* 한 줄로 고정되지 않게 */
+  text-align: center;       /* 가운데 정렬 (선택사항) */
+  margin: 0.5rem 0 0;       /* 위 여백 조정 (선택사항) */
+}

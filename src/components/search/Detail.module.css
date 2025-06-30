@@ -1,4 +1,8 @@
 .textLight {
+    margin-top: 30%;
+    display: flex;
+  justify-content: center;
+  align-items: center;
     color: #fff;
 }
 
@@ -29,6 +33,7 @@
     flex-direction: column;
     align-items: center;
     gap: 1rem;
+    
 }
 
 .detailPoster {
@@ -48,7 +53,7 @@
 .detailTitle {
     font-size: 2rem;
     font-weight: bold;
-    color: #b31f2b;
+    color: aliceblue;
 }
 
 .detailOverview,
