@@ -9,6 +9,7 @@ import "./recommendMain/styles/Header.css";
 import profileLogo from "./recommendFriend/img/ProfileLogo.png";
 import InviteModal from "./recommendFriend/InviteModal";
 import {autoRefreshCheck} from "../tokenUtils/TokenUtils";
+import {checkToken} from "../tokenUtils/TokenUtil4Post";
 
 export default function Nav({
                                 onClickRecommend,
@@ -24,6 +25,7 @@ export default function Nav({
     const navigate = useNavigate();
 // 자동 친구 추가 기능 state 추가
     const [invites, setInvites] = useState([]);
+    const [profileImg, setProfileImg] = useState(null);
     const [showInviteModal, setShowInviteModal] = useState(false);
 
     const {
