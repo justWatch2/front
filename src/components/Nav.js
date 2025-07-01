@@ -60,6 +60,7 @@ export default function Nav({
     }, []);
 
     // 로그인 후 드롭다운 닫기와 상태 변경을 한 번에 처리
+
     const handleLoginSuccess = async () => {
         onLoginClick(); // RecommendReal 상태 변경
         setShowLoginDropdown(false); // 드롭다운 닫기

@@ -12,11 +12,11 @@ export default function Main(){
         <div style={{ marginTop: "-50px" }}>
             <Banner/>
             <Row title="NETFLIX ORIGINALS" id="NO" fetchUrl={requests.fetchNetFlixOriginals} isLargeRow />
-            <Row title="Trending Now" id="TN" fetchUrl={requests.fetchTrending} />
-            <Row title="Top Rated" id="TR" fetchUrl={requests.fetchTopRated} />
-            <Row title="Action Movies" id="AM" fetchUrl={requests.fetchActionMovies} />
-            <Row title="Comedy Movies" id="CM" fetchUrl={requests.fetchComedyMovies} />
-            <Footer />
+            <Row title="Trending Now" id="TN" fetchUrl={requests.fetchTrending} isLargeRow />
+            <Row title="Top Rated" id="TR" fetchUrl={requests.fetchTopRated} isLargeRow />
+            <Row title="Action Movies" id="AM" fetchUrl={requests.fetchActionMovies} isLargeRow />
+            <Row title="Comedy Movies" id="CM" fetchUrl={requests.fetchComedyMovies} isLargeRow />
+
         </div>
     )
 }

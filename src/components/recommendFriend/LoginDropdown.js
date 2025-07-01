@@ -43,11 +43,11 @@ function LoginDropdown({ onClose, onLoginSuccess, loginButtonRect }) {
 
             // window.location.href = "/";
 
+
               if (onLoginSuccess) onLoginSuccess();
               //
               // //  모달 닫기
               if (onClose) onClose();
-
 
 
           } else {

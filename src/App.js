@@ -85,6 +85,7 @@ function App() {
       {/*        onDetails={goToDetails}*/}
       {/*    />*/}
       {/*)}*/}
+      <Footer />
     </div>
   );
 }
