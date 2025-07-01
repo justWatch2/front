@@ -77,7 +77,7 @@ export default function Nav({
             추천
           </h2></Link>
             <Link style={{textDecoration: "none"}} to={"/recommend/friend"}><h2 className="nav__recommend" >
-                친구 추천
+                추천 with Friends
             </h2></Link>
 
             <Link style={{textDecoration: "none"}} to={"/post"}><h2 className="nav__recommend" >

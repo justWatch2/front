@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from "react";
-// import 'bootstrap/dist/css/bootstrap.min.css';
 import "./App.css";
 import Nav from "./components/Nav";
 import FriendRecommend from "./components/recommendFriend/FriendRecommend";
@@ -11,7 +10,6 @@ import Posts from "./components/board/Posts";
 import Write from "./components/board/Write";
 import Post from "./components/board/Post";
 import RecommendReal from "./recommendReal.jsx";
-import {autoRefreshCheck} from "./tokenUtils/TokenUtils";
 
 
 
@@ -24,49 +22,22 @@ function App() {
   useEffect(() => {
     const token = localStorage.getItem("jwt");
     const urlParams = new URLSearchParams(window.location.search);
+    const uuidFromUrl = urlParams.get("uuid");
 
     if (token) {
       setIsLoggedIn2(true);
-      tryInviteFriend();
+      // tryInviteFriend();
     }
-    const inviteUuid = urlParams.get("uuid");
-    if (inviteUuid) {
-      localStorage.setItem("uuid", inviteUuid);
+
+    //urlParmas => uuid=sdfsdfd 이런식으로 들어가 있다
+    // uuidTokens 안에 들어가 있는 토큰이 1개이상이면 초대장을 저장한다.
+    if (uuidFromUrl) {
+      localStorage.setItem(urlParams, urlParams);
       alert("uuid 초대 저장");
-      alert(inviteUuid);
+      alert(urlParams);
     }
 
   }, []);
-
-  const tryInviteFriend = async () => {
-    const inviteUuid = localStorage.getItem("uuid");
-    if (!inviteUuid) return;
-
-    try {
-      const response = await autoRefreshCheck({
-        url: "http://localhost:8080/api/friend/invite",
-        method: "POST",
-        data: { uuid: inviteUuid },
-        headers: { "Content-Type": "application/json" }
-      });
-
-      if (response.status === 200) {
-        alert("친구 추가 성공!");
-        localStorage.removeItem("uuid");
-      } else {
-        alert("친구 추가 실패");
-      }
-    } catch (error) {
-      console.error("친구 초대 에러:", error);
-      if (error.response?.status === 406) {
-        alert("이미 친구입니다! 또는 탈퇴한 id입니다.");
-        localStorage.removeItem("uuid");
-      } else {
-        alert("친구 추가 중 에러가 발생했습니다.");
-      }
-    }
-  };
-
 
 
   const handleLoginClick = () => {
@@ -108,7 +79,7 @@ function App() {
           <Route path="/post/detaile/:no" element={""}></Route>
 
           <Route path="/search" element={<Home/>}></Route>
-          <Route path="/search/detail/:category/:id" element={<Detail/>}></Route>
+          <Route path="/detail/:category/:id" element={<Detail/>}></Route>
           <Route path="/mypage" element={""}></Route>
 
         </Routes>

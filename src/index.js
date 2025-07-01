@@ -7,11 +7,11 @@ import {RecommendationProvider} from "./components/recommendMain/RecommendationC
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
-  <React.StrictMode>
+  //<React.StrictMode>
       <RecommendationProvider>
           <App />
       </RecommendationProvider>
-  </React.StrictMode>
+  //</React.StrictMode>
 );
 
 // If you want to start measuring performance in your app, pass a function
