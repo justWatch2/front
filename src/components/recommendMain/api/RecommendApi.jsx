@@ -1,6 +1,10 @@
 import axios from "axios";
-export const API_SERVER_HOST = "http://192.168.0.72:8080";
+import {autoRefreshCheck} from '../../../tokenUtils/TokenUtils';
+// export const API_SERVER_HOST = "http://192.168.0.72:8080";
+export const API_SERVER_HOST = "http://localhost:8080";
 const prefix = `${API_SERVER_HOST}/rec`;
+const prefixuser = `${API_SERVER_HOST}/user`;
+
 
 export const weatherRecommendApi = async (genresMovies, genresTV) => {
     try{
@@ -59,7 +63,11 @@ export const complexRecommendApi = async(payload)=>{
 
 export const MemberRecommendApi = async (payload)=>{
     try{
-        const response = await axios.post(`${prefix}/user`,payload
+        const response = await autoRefreshCheck({
+            method:'post',
+            url:`${prefixuser}/userrec`,
+            data:payload
+        }
         )
 
         console.log(response);

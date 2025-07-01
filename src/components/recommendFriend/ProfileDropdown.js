@@ -1,40 +1,31 @@
 import React from "react";
-import {autoRefreshCheck} from "../../tokenUtils/TokenUtils";
 import KakaoFriendInvite from "./KakaoInviteButton";
+// 1. react-router-dom에서 useNavigate를 import 합니다.
+import { useNavigate } from "react-router-dom";
 
-function ProfileDropdown({onLogout}) {
+// 기존 CSS 파일을 그대로 사용합니다.
 
-    //로그아웃
-    async function onLogout() {
-        const token = localStorage.getItem("jwt");
+// 부모(Nav)로부터 onLogout 함수를 props로 받습니다.
+function ProfileDropdown({ onLogout }) {
+    // 2. navigate 함수를 초기화합니다.
+    const navigate = useNavigate();
 
-        if (!token) {
-            alert("로그인된 상태가 아닙니다.");
-            return;
-        }
-        try {
-            await autoRefreshCheck({
-                method: "POST",
-                url: "http://localhost:8080/api/logout",
-            });
-            localStorage.removeItem("jwt");
-            alert("로그아웃 완료!");
-            window.location.href = "/";
-        } catch (error) {
-            console.error("로그아웃 실패:", error);
-            alert("로그아웃 중 오류 발생");
-        }
-    }
-
+    // 3. 마이페이지로 이동하는 함수를 만듭니다.
+    const goToMyPage = () => {
+        navigate('/mypage');
+    };
 
     return (
+        // 기존 UI 구조를 그대로 사용합니다.
         <div className="profile-dropdown">
-            <button className="dropdown-item" onClick={() => console.log("마이페이지로 이동")}>
+            {/* 4. '마이페이지' 버튼 클릭 시 goToMyPage 함수를 실행합니다. */}
+            <button className="dropdown-item" onClick={goToMyPage}>
                 마이페이지
             </button>
 
-            <KakaoFriendInvite/>
+            <KakaoFriendInvite />
 
+            {/* 로그아웃 버튼은 기존과 동일합니다. */}
             <button className="dropdown-item" onClick={onLogout}>
                 로그아웃
             </button>

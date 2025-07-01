@@ -42,8 +42,7 @@ const MovieModal = ({ movie, onClose, onDetails, clickPosition }) => {
         setModalTransform('translateX(-50%)'); // 가로 중앙 정렬만 남김
     }, [movie, clickPosition]); // movie나 clickPosition이 변경될 때마다 이 효과를 재실행
 
-    // 3. 변수 선언 (Hooks 호출 완료 후, JSX 렌더링 로직 시작 전)
-    // displayRating 계산을 여기로 옮깁니다. (movie가 null일 수 있으므로 옵셔널 체이닝 `?.` 사용)
+
     const displayRating = (movie?.averageRating || movie?.vote_average || 0) / 2;
 
     // 4. movie가 없으면 여기서 일찍 리턴합니다. (모든 Hooks 호출이 완료된 후에!)
@@ -83,7 +82,7 @@ const MovieModal = ({ movie, onClose, onDetails, clickPosition }) => {
                         <img
                             className="movie-modal-poster-large"
                             src={`https://image.tmdb.org/t/p/original${movie.backdrop_path || movie.poster_path || 
-                            movie.backdropPath || movie.postPath}`}
+                            movie.backdropPath || movie.poster_path}`}
                             alt={absoluteString}
                         />
                     )}

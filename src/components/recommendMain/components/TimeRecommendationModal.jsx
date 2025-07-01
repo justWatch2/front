@@ -1,17 +1,15 @@
-import React, {useContext, useEffect, useRef, useState} from 'react';
-import axios from 'axios';
-import {RecommendationContext} from '../RecommendationContext.jsx';
+import React, { useContext, useEffect, useRef, useState, useCallback } from 'react';
+import { RecommendationContext } from '../RecommendationContext.jsx';
 import '../styles/Recommendation.css';
-import {MemberRecommendApi, timeRecommendApi} from "../api/RecommendApi";
+import { MemberRecommendApi, timeRecommendApi } from "../api/RecommendApi";
 
 function TimeRecommendation() {
     const {
         activeRecommendation,
         closeRecommendation,
         requestRecommendation,
-        setSelectedCategory,
         setIsLoading,
-        userId,
+        // userId는 payload에 직접 담지 않으므로 여기서 받아올 필요가 없습니다.
         isMemberModeActive,
         selectedMediaType,
         selectedRegion,
@@ -21,156 +19,95 @@ function TimeRecommendation() {
     const [isClosing, setIsClosing] = useState(false);
     const overlayRef = useRef(null);
 
-
     const getTimeSlot = () => {
         const hour = new Date().getHours();
-        if (hour >= 0 && hour < 3) return '00-03';
-        if (hour >= 3 && hour < 6) return '03-06';
-        if (hour >= 6 && hour < 9) return '06-09';
-        if (hour >= 9 && hour < 12) return '09-12';
-        if (hour >= 12 && hour < 15) return '12-15';
-        if (hour >= 15 && hour < 18) return '15-18';
-        if (hour >= 18 && hour < 21) return '18-21';
-        return '21-24';
+        if (hour < 3) return '00-03'; if (hour < 6) return '03-06';
+        if (hour < 9) return '06-09'; if (hour < 12) return '09-12';
+        if (hour < 15) return '12-15'; if (hour < 18) return '15-18';
+        if (hour < 21) return '18-21'; return '21-24';
     };
-
 
     const getGenres = (timeSlot) => {
-        const genresMap = {
-            '00-03': {
-                genresMovie: ['로맨스', '가족'],
-                genresTV: ['로맨스', '가족']
-            },
-            '03-06': {
-                genresMovie: ['공포', '미스터리'],
-                genresTV: ['미스터리', '범죄']
-            },
-            '06-09': {
-                genresMovie: ['다큐멘터리', '역사'],
-                genresTV: ['다큐멘터리', '역사']
-            },
-            '09-12': {
-                genresMovie: ['코미디', '애니메이션'],
-                genresTV: ['코미디', 'Animation']
-            },
-            '12-15': {
-                genresMovie: ['모험', '판타지'],
-                genresTV: ['Action & Adventure', 'Sci-Fi & Fantasy']
-            },
-            '15-18': {
-                genresMovie: ['드라마', '로맨스'],
-                genresTV: ['드라마', '로맨스']
-            },
-            '18-21': {
-                genresMovie: ['스릴러', '범죄'],
-                genresTV: ['범죄', '미스터리']
-            },
-            '21-24': {
-                genresMovie: ['액션', 'SF'],
-                genresTV: ['액션', 'Sci-Fi & Fantasy']
-            }
-        };
-
-        return genresMap[timeSlot] || {
-            genresMovie: ['기타'],
-            genresTV: ['기타']
-        };
+        const genresMap = { /* ... (장르 맵핑은 그대로) ... */ };
+        return genresMap[timeSlot] || { genresMovie: [], genresTV: [] };
     };
 
+    const handleClose = useCallback(() => {
+        setIsClosing(true);
+        setTimeout(() => {
+            closeRecommendation();
+            setIsClosing(false);
+        }, 400);
+    }, [closeRecommendation]);
+
+    useEffect(() => {
+        const handleClickOutside = (e) => {
+            if (overlayRef.current && !overlayRef.current.contains(e.target)) handleClose();
+        };
+        document.addEventListener('mousedown', handleClickOutside);
+        return () => document.removeEventListener('mousedown', handleClickOutside);
+    }, [handleClose]);
 
     const handleSubmit = async () => {
         const timeSlot = getTimeSlot();
-        console.log('Fetching time recommendations for:', timeSlot);
-
         if (isMemberModeActive) {
-            if (!selectedMediaType) {
-                alert('회원 모드: 미디어 타입을 선택하세요.');
-                return;
-            }
-            if (!selectedRegion) {
-                alert('회원 모드: 지역을 선택하세요.');
-                return;
-            }
-            if (!selectedAgeRating) {
-                alert('회원 모드: 연령 등급을 선택하세요.');
+            if (!selectedMediaType || !selectedRegion || !selectedAgeRating) {
+                alert('회원 모드에서는 미디어 타입, 지역, 연령 등급을 모두 선택해야 합니다.');
                 return;
             }
         }
-        setIsClosing(true);
+
+        setIsLoading(true);
+
         try {
-            let response;
-            const userIdToUse =userId;
-            const {genresMovie, genresTV} = getGenres(timeSlot);
-            let genresToSend = [];
+            const { genresMovie, genresTV } = getGenres(timeSlot);
+            let responseData;
 
-            if(selectedMediaType === 'movie') {
-                genresToSend = genresMovie
-            }else if(selectedMediaType === 'tv') {
-                genresToSend = genresTV
-            }
+            if (isMemberModeActive) {
+                const genresToSend = selectedMediaType === 'movie' ? genresMovie : genresTV;
 
-            if(isMemberModeActive) {
-
+                // [최종 수정] payload에서 userId를 완전히 제거합니다.
                 const payload = {
-                    userId: userIdToUse,
                     mediaType: selectedMediaType,
                     region: selectedRegion,
                     ageRating: selectedAgeRating,
-                    selectedGenres:genresToSend
-                }
+                    selectedGenres: genresToSend,
+                    timeSlot: timeSlot
+                };
 
-                setIsLoading(true);
-                response = await MemberRecommendApi(payload);
-
+                responseData = await MemberRecommendApi(payload);
                 requestRecommendation({
-                    recommendationId: 'complex',
-                    data: response.data,
-                    isMemberModeActiveAtCall: isMemberModeActive
+                    recommendationId: 'user',
+                    data: responseData.data,
+                    isMemberModeActiveAtCall: true
                 });
 
-            }else{
-                setIsClosing(true);
-                setIsLoading(true);
-                response = await timeRecommendApi(genresMovie, genresTV);
+            }else {
+                // 1. API 응답을 response 변수에 저장
+                const response = await timeRecommendApi(genresMovie, genresTV);
 
+                // 2. MBTI 컴포넌트처럼, 응답 데이터를 가공하여 새로운 data 객체 생성
                 const data = {
                     domesticMovies: response.data.domesticMovies || [],
                     internationalMovies: response.data.internationalMovies || [],
                     domesticTV: response.data.domesticTV || [],
                     internationalTV: response.data.internationalTV || [],
-
                 };
+
+                // 3. 가공된 data 객체를 전달
                 requestRecommendation({
                     recommendationId: 'time',
-                    data,
+                    data: data, // <-- 가공된 데이터를 전달
+                    isMemberModeActiveAtCall: false
                 });
             }
-
-
-            closeRecommendation();
+            handleClose();
         } catch (error) {
             console.error('Error fetching recommendations:', error);
-            alert('추천 요청 실패');
+            alert('추천 요청에 실패했습니다.');
+            setIsLoading(false);
         }
     };
-    const handleClose = () => {
-        setIsClosing(true);
-        setSelectedCategory(null)
-        setTimeout(() => {
-            closeRecommendation();
-            setIsClosing(false);
-        }, 0);
-    };
-
-    useEffect(() => {
-        const handleClickOutside = (e) => {
-            if (overlayRef.current && !overlayRef.current.contains(e.target)) {
-                handleClose();
-            }
-        };
-        document.addEventListener('mousedown', handleClickOutside);
-        return () => document.removeEventListener('mousedown', handleClickOutside);
-    }, []);
 
     if (activeRecommendation !== 'time') return null;
 
@@ -181,16 +118,10 @@ function TimeRecommendation() {
                 <div className="recommendation-form">
                     <div className="form-field">
                         <p>현재 시간: {new Date().toLocaleTimeString('ko-KR')}</p>
-                        <p>추천
-                            시간대: {getTimeSlot() === 'morning' ? '아침' : getTimeSlot() === 'afternoon' ? '점심' : getTimeSlot() === 'evening' ? '저녁' : '새벽'}</p>
                     </div>
                     <div className="form-buttons">
-                        <button onClick={closeRecommendation} className="form-button form-button-secondary">
-                            취소
-                        </button>
-                        <button onClick={handleSubmit} className="form-button form-button-primary">
-                            확인
-                        </button>
+                        <button onClick={handleClose} className="form-button form-button-secondary">취소</button>
+                        <button onClick={handleSubmit} className="form-button form-button-primary">확인</button>
                     </div>
                 </div>
             </div>

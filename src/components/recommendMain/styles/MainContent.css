@@ -1,18 +1,16 @@
-/* src/styles/MainContent.css */
 @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700;900&display=swap');
-/* .main-content 컴포넌트의 최상위 컨테이너 */
+@import url('https://fonts.googleapis.com/css2?family=Oswald:wght@700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400&display=swap');
+
+/* --- 기본 레이아웃 및 피처드 콘텐츠 --- */
 .main-content {
     position: relative;
     width: 100%;
     padding-top: 0;
     min-height: calc(100vh - 0px);
-    background-color: #000000;
+    background-color: #141414;
     padding-bottom: 20px;
 }
-/* --- 넷플릭스 메인 상단 피처드 콘텐츠 섹션 (`image_87b43f.jpg`처럼) --- */
-
-
-/* Featured content의 그라데이션 오버레이 (이미지 위에 덮어씌움) */
 .featured-content {
     position: relative;
     height: 700px;
@@ -24,9 +22,7 @@
     color: white;
     text-shadow: 5px 5px 5px rgba(0,0,0,0.5);
     background-color: #141414;
-    /* 슬로우 전환 효과 추가 */
-    transition: background-image 1s ease-in-out; /* 배경 이미지 전환 시 부드럽게 */
-
+    transition: background-image 1s ease-in-out;
 }
 .featured-content::after {
     content: '';
@@ -37,25 +33,21 @@
     height: 100%;
     background: linear-gradient(to bottom, rgba(0,0,0,0.4) 0%, rgba(0,0,0,0) 60%, rgba(0,0,0,1) 100%);
     z-index: 1;
-    opacity: 20;
 }
-
 .featured-info {
-    max-width: 40%; /* 텍스트 영역 너비 (조정 가능) */
+    max-width: 40%;
     text-align: left;
-    padding-bottom: 0px; /* 하단 여백 */
-    z-index: 2; /* 텍스트가 오버레이 위에 오도록 */
+    padding-bottom: 0px;
+    z-index: 2;
 }
-
 .featured-info h1 {
-    font-family: 'Oswald', sans-serif; /* Featured 제목에만 Roboto 적용 */
+    font-family: 'Oswald', sans-serif;
     font-size: 3.0em;
     margin-bottom: 15px;
-    color: #e0d3d3; /* 약간 회색빛 도는 흰색 */
+    color: #e0d3d3;
     text-shadow: 8px 5px 5px rgba(5, 5, 5, 0.7);
-    font-weight: 900; /* Roboto Bold */
+    font-weight: 900;
 }
-
 .featured-info p {
     font-size: 1.0em;
     line-height: 1.5;
@@ -66,24 +58,22 @@
     overflow: hidden;
     text-shadow: 3px 4px 5px rgba(2, 2, 2, 0.7);
     text-overflow: ellipsis;
-    color: #dad6d6; /* 더 밝은 회색 */
-    font-family: 'Roboto', sans-serif; /* Featured 설명에만 Roboto 적용 */
-    font-weight: 400; /* Roboto Regular */
+    color: #dad6d6;
+    font-family: 'Roboto', sans-serif;
+    font-weight: 400;
 }
-
 .featured-buttons {
     display: flex;
     gap: 15px;
 }
-
 .featured-buttons .play-button,
 .featured-buttons .info-button {
     background-color: rgba(255, 255, 255, 0.2);
     color: white;
     border: none;
-    padding: 12px 30px; /* 버튼 패딩 키움 */
+    padding: 12px 30px;
     border-radius: 5px;
-    font-size: 1.2em; /* 버튼 글씨 키움 */
+    font-size: 1.2em;
     font-weight: bold;
     cursor: pointer;
     transition: background-color 0.3s ease;
@@ -91,7 +81,6 @@
     align-items: center;
     justify-content: center;
 }
-
 .featured-buttons .play-button:hover,
 .featured-buttons .info-button:hover {
     background-color: rgba(255, 255, 255, 0.4);
@@ -99,8 +88,6 @@
 .featured-buttons i {
     margin-right: 10px;
 }
-
-/* 슬라이드 네비게이션 버튼 */
 .featured-nav-button {
     position: absolute;
     top: 50%;
@@ -112,40 +99,38 @@
     padding: 10px 15px;
     cursor: pointer;
     z-index: 3;
-    opacity: 0; /* 평소에는 숨김 */
+    opacity: 0;
     transition: opacity 0.5s ease-in-out;
 }
-
 .featured-content:hover .featured-nav-button {
-    opacity: 0.7; /* 호버 시 약간 불투명하게 */
+    opacity: 0.7;
+}
+.featured-nav-button-left { left: 20px; border-radius: 0 5px 5px 0; }
+.featured-nav-button-right { right: 20px; border-radius: 5px 0 0 5px; }
+
+
+/* --- 회원 모드 버튼 및 카테고리 --- */
+.member-mode-button-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    margin-top: -140px;
+    margin-bottom: 20px;
+    position: relative;
+    z-index: 11;
 }
 
-.featured-nav-button-left {
-    left: 20px;
-    border-top-right-radius: 5px;
-    border-bottom-right-radius: 5px;
-}
-
-.featured-nav-button-right {
-    right: 20px;
-    border-top-left-radius: 5px;
-    border-bottom-left-radius: 5px;
-}
-
-
-/* --- 추천 카테고리 바 (메인 피쳐드 콘텐츠 아래로 재배치) --- */
 .recommendation-categories {
     display: flex;
     align-items: center;
-    justify-content: center; /* 중앙 정렬 */
+    justify-content: center;
     position: relative;
     z-index: 10;
-    margin-top: -90px; /* Featured Content 위로 겹치게 (음수 마진) */
-    padding: 0 50px; /* Featured Content와 동일한 좌우 패딩 */
-    margin-bottom: 0px; /* 카테고리 바와 다음 섹션 간격 (5px) */
-    /*background-color: #00000; !* 메인 배경색을 상속받도록 투명하게 설정 *!*/
+    margin-top: 0;
+    padding: 0 50px;
+    margin-bottom: 10px;
 }
-
 .category-nav-button {
     background: rgba(25, 25, 25, 0.85);
     border: none;
@@ -158,15 +143,10 @@
     box-shadow: 0 0 5px transparent;
     z-index: 10;
 }
-
-.category-nav-button:hover {
-    background: rgba(229, 9, 20, 0.9);
-    box-shadow: 0 0 12px rgba(229, 9, 20, 0.8);
-}
-
+.category-nav-button:hover { background: rgba(229, 9, 20, 0.9); box-shadow: 0 0 12px rgba(229, 9, 20, 0.8); }
 .categories-list {
     display: flex;
-    overflow-x: hidden; /* JavaScript로 스크롤 제어 */
+    overflow-x: hidden;
     gap: 13px;
     padding: 10px 0;
     scrollbar-width: none;
@@ -174,11 +154,7 @@
     margin: 0 5px;
     justify-content: center;
 }
-
-.categories-list::-webkit-scrollbar {
-    display: none;
-}
-
+.categories-list::-webkit-scrollbar { display: none; }
 .category-item {
     background: #98111f;
     padding: 12px 24px;
@@ -191,161 +167,105 @@
     box-shadow: 0 0 5px rgba(229, 9, 20, 0.6);
     transition: background 0.3s, transform 0.2s, box-shadow 0.3s;
 }
+.category-item:hover { background: #ff1a1a; transform: scale(1.07); box-shadow: 0 0 15px rgba(255, 25, 25, 0.8); }
+.category-item.selected { background: #e50914; box-shadow: 0 0 18px rgba(229, 9, 20, 1); }
 
-.category-item:hover {
-    background: #ff1a1a;
-    transform: scale(1.07);
-    box-shadow: 0 0 15px rgba(255, 25, 25, 0.8);
+
+/* --- 콘텐츠 섹션 --- */
+.content-sections {
+    margin-top: 20px;
+    padding: 0 10px;
+    background-color: #141414;
 }
 
-.category-item.selected {
-    background: #e50914;
-    box-shadow: 0 0 18px rgba(229, 9, 20, 1);
-}
-
-.content-sections{
-    margin-top: 0px; /* 카테고리 바 바로 아래에 붙도록 */
-    padding: 0 10px; /* Featured Content와 동일한 좌우 패딩 */
-    background-color: #141414; /* 넷플릭스 배경과 같은 검은색으로 직접 지정 */
-}
-
-/* 각 추천 섹션 */
 .recommendation-section {
-    margin-top: 0px; /* 섹션 간 간격 (10px) */
-    margin-bottom: 0px; /* 섹션 아래 마진 제거 */
-    background-color: #0a0a0a; /* 넷플릭스 배경과 같은 검은색으로 직접 지정 */
+    margin-bottom: 20px;
 }
 
-.section-title {
-    font-size: 1.3rem;
+.section-title, .row-title {
+    font-size: 1.4rem;
+    color: #f3ebeb;
+    margin-bottom: 15px;
+    padding-left: 10px;
     font-weight: 700;
-    margin-bottom: 5px; /* 제목 아래 간격 */
-    color: #c2bbbb;
-    text-shadow: 5px 4px 4px rgba(241, 6, 6, 0.7);
+    text-shadow: 5px 1px 5px rgba(204, 153, 157, 0.8);
 }
 
-/* 추천 로우 (Row 컴포넌트 외부) */
+
+/* --- Row 컴포넌트 관련 스타일 --- */
 .recommendation-row {
-    margin-bottom: 0px; /* 로우 아래 간격 제거 */
-    background-color: transparent; /* 메인 배경색을 상속받도록 투명하게 설정 */
+    margin-bottom: 0px;
+    background-color: transparent;
 }
 
-.row-title {
-    font-size: 1.5rem;
-    font-weight: 700;
-    margin-bottom: 5px; /* 제목 아래 간격 */
-    color: #fff;
-    text-shadow: 0 0 5px rgba(0, 0, 0, 0.5);
-}
-
-.loading {
-    text-align: center;
-    font-size: 1.2rem;
-    color: #bbb;
-    padding: 50px 0;
-}
-
-/* Row 컴포넌트 자체의 컨테이너 */
 .row-container {
     position: relative;
     z-index: 1;
-    border-radius: 8px;
-    border: 2px solid transparent;
-    overflow: visible;
-    background-color:#0a0a0a; /* 메인 배경색을 상속받도록 투명하게 설정 */
+    background-color: transparent;
 }
 
 .row-container::before {
     content: "";
     position: absolute;
-    top: -3px;
-    left: -3px;
-    right: -3px;
-    bottom: -3px;
+    top: -3px; left: -3px; right: -3px; bottom: -3px;
     border-radius: 11px;
     pointer-events: none;
     z-index: -1;
-
-    border: 0.5px solid transparent;
-    background:
-            linear-gradient(
-                    90deg,
-                    transparent 0%,
-                    /*!*#ee0808 10%,*! #96968f 20%,*/
-                    /*#d2bc2c 30%,*/
-                    /*#0eea22 40%,*/
-                    /*#06a0f3 50%,*/
-                    /*#091be5 60%,*/ #ef0519 30%,
-                    transparent 80%
-            );
+    border: 0.3px solid transparent;
+    background: linear-gradient(90deg, transparent 0%, #d9cbd0 30%, transparent 80%);
     background-size: 200% 200%;
-
-    -webkit-mask:
-            linear-gradient(#a304f6 0 0) content-box,
-            linear-gradient(#fff 0 0);
+    -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
     -webkit-mask-composite: destination-out;
     mask-composite: exclude;
-
     animation: glowMoveLinear 4s linear infinite;
 }
 
 @keyframes glowMoveLinear {
-    from {
-        background-position: 0% 0%;
-    }
-    to {
-        background-position: 200% 0%;
-    }
+    from { background-position: 0% 0%; }
+    to { background-position: 200% 0%; }
 }
 
-/* 실제 가로 스크롤 로우 */
 .row {
     display: flex;
-    overflow-x: scroll; /* 스크롤바가 보이도록 hidden -> scroll */
-    gap: 10px; /* 로우 아이템 간격 더 줄임 */
-    padding-bottom: 13px;
-    padding-top: 13px;
-    background-color: #0a0a0a; /* 메인 배경색을 상속받도록 투명하게 설정 */
+    overflow-x: scroll;
+    /* [수정 1] 영화 포스터 간격을 0으로 변경 */
+    gap: 0px;
+    background-color: #141414;
+    padding: 20px 0; /* 상하 여백 20px, 좌우 0px */
 }
-
-.row::-webkit-scrollbar {
-    display: none; /* 웹킷 스크롤바 숨김 */
-}
+.row::-webkit-scrollbar { display: none; }
 
 .row-item {
     flex: 0 0 auto;
-    width: 110px;
-    height: 160px;
-    /* #222 대신 넷플릭스 배경색인 #141414 또는 더 진한 검은색으로 변경 */
-    background: #0a0a0a; /* 각 포스터 뒤 배경도 넷플릭스 검은색으로 */
-    border-radius: 6px;
+    gap:0px;
+    width: 100px; /* 가독성을 위해 약간 너비를 늘립니다 */
+    height: 150px;
+    background: #222;
+    border-radius: 10px;
     overflow: hidden;
-    transition: transform 0.3s, box-shadow 0.3s;
-    box-shadow: 0 0 5px rgba(0,0,0,0.7);
+    transition: transform 0.3s, box-shadow 0.3s, border-color 0.2s;
+    cursor: pointer;
+    /* [수정 1] gap 대신 margin을 사용하지 않아 간격을 완전히 제거합니다 */
+    margin: 0;
+    border: 0.1px solid transparent; /* 호버 애니메이션을 위한 투명 테두리 */
 }
+.row-item img { width: 100%; height: 100%; object-fit: cover; display: block; }
 
-.row-item img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    display: block;
-}
-
+/* [수정 2] 영화 포스터 호버 시 노란색 후광 효과 */
 .row-item:hover {
     transform: scale(1.1);
-    box-shadow: 0 6px 20px rgba(229, 9, 20, 0.9);
-    border: 1px solid #e50914;
+    z-index: 5; /* 다른 포스터 위로 올라오도록 */
+    box-shadow: 0 6px 20px rgba(238, 3, 3, 0.7); /* 노란색 그림자 (Gold) */
+    border-color: #ec0505; /* 노란색 테두리 */
 }
 
-/* 로우 네비게이션 버튼 (좌우 스크롤 버튼) */
 .row-nav-button {
     position: absolute;
-    top: 0;
-    bottom: 0;
+    top: 0; bottom: 0;
     width: 40px;
-    background: rgba(28, 27, 27, 0.6);
+    background: rgba(20, 20, 20, 0.6);
     border: none;
-    color: #d7caca;
+    color: #fff;
     font-size: 1.5rem;
     display: flex;
     align-items: center;
@@ -353,86 +273,8 @@
     cursor: pointer;
     opacity: 0;
     transition: opacity 0.3s;
-    border-radius: 8px;
     z-index: 10;
-    box-shadow: 0 0 8px rgba(10, 10, 10, 0.7);
 }
-
-.row-container:hover .row-nav-button {
-    opacity: 1;
-}
-
-.row-nav-button-left {
-    left: 0px;
-}
-
-.row-nav-button-right {
-    right: 0px;
-}
-
-.member-mode-filters {
-    display: flex;
-    justify-content: center; /* 필터 그룹들을 중앙 정렬 */
-    align-items: flex-start; /* 필터 그룹들을 상단 정렬 */
-    gap: 30px; /* 필터 그룹 간의 간격 */
-    margin-top: 20px; /* 추천 카테고리 바 아래 여백 */
-    margin-bottom: 30px; /* 추천 섹션 위 여백 */
-    padding: 15px 50px; /* 좌우 패딩 */
-    background-color: #1a1a1a; /* 필터 섹션의 배경색 (넷플릭스 카드 배경색과 유사) */
-    border-radius: 8px; /* 모서리 둥글게 */
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.5); /* 그림자 */
-    flex-wrap: wrap; /* 작은 화면에서 줄바꿈 허용 */
-}
-
-.filter-group {
-    display: flex;
-    flex-direction: column;
-    gap: 10px; /* 레이블과 버튼 그룹 사이 간격 */
-    align-items: center; /* 필터 그룹 내 요소들 중앙 정렬 */
-    min-width: 150px; /* 최소 너비 */
-}
-
-.filter-group label {
-    font-size: 1rem;
-    color: #f5f5f5;
-    font-weight: 600;
-    margin-bottom: 5px;
-    text-align: center;
-}
-
-/* 버튼 그룹 스타일 (recommendation.css에 있는 것과 유사) */
-.button-group {
-    display: flex;
-    gap: 5px; /* 버튼 사이 간격 */
-    flex-wrap: nowrap; /* 버튼 줄바꿈 방지 */
-    justify-content: center; /* 버튼들 중앙 정렬 */
-}
-
-/* genre-item 스타일 재활용 (MainContent에 이미 정의되어 있을 수 있음) */
-/* 만약 이전에 genre-item 스타일이 recommendation.css에만 있었다면, MainContent.css에도 추가해야 합니다. */
-/* 여기서는 recommendation.css에 있는 genre-item 스타일을 MainContent.css에도 복사했다고 가정합니다. */
-.genre-item {
-    padding: 8px 15px;
-    border-radius: 4px;
-    background: #555;
-    color: #fff;
-    font-size: 0.9rem;
-    cursor: pointer;
-    transition: background 0.3s, color 0.3s, transform 0.2s;
-    border: 1px solid #666;
-    flex: 1;
-    text-align: center;
-    white-space: nowrap; /* 텍스트 줄바꿈 방지 */
-}
-
-.genre-item.selected {
-    background: #e50914;
-    border-color: #e50914;
-    font-weight: 600;
-    transform: scale(1.05); /* 선택 시 약간 커지도록 */
-}
-
-.genre-item:hover {
-    background: #777;
-    color: #fff;
-}
+.row-container:hover .row-nav-button { opacity: 1; }
+.row-nav-button-left { left: 0px; }
+.row-nav-button-right { right: 0px; }
