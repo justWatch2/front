@@ -160,7 +160,7 @@ export default function Nav({
                     추천 with Friends
                 </h2>
 
-                <Link style={{textDecoration: "none"}} to={"/post"}><h2 className="nav__recommend">
+                <Link style={{textDecoration: "none"}} to={"/posts/common"}><h2 className="nav__recommend">
                     게시판
                 </h2></Link>
             </div>
