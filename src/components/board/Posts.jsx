@@ -228,9 +228,9 @@ function Posts() {
                 display: 'flex',
                 alignItems: 'center',
                 width: '100%',
-                border: '2px solid #ffffff',
+                // border: '2px solid #ffffff',
                 mb: 2,
-                borderRadius: '4px'
+                // borderRadius: '4px'
             }}>
                 <Typography variant="h4"
                             sx={{color: "#ffffff", padding: '10px', display: 'inline-block', fontWeight: 'bold'}}>
