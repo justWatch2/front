@@ -43,7 +43,9 @@ export default function Row({ isLargeRow, title, id, fetchUrl}){
                 <div
                     key={movie.id}
                     className=""
+
                     onClick={(event) => {
+
                         // if (onMovieClick) {
                         //     onMovieClick(item, event);
                         // }
@@ -52,7 +54,7 @@ export default function Row({ isLargeRow, title, id, fetchUrl}){
 
                 <img
                 key={movie.id}
-                className={`row__poster ${isLargeRow && "row__posterLarge"}`}
+                className={`${isLargeRow ? "row__posterLarge":"row__poster" }`}
                 src={`https://image.tmdb.org/t/p/original/${
                  movie.poster_path
                 } `}

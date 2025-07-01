@@ -58,7 +58,6 @@ export async function checkToken(config) {
             }
 
             // 다른 요청들은 리프레시 완료까지 대기
-            try {
                 const newToken = await refreshPromise;
                 // 리프레시 성공하면 원래 요청 재시도
                 return await axios({
@@ -69,10 +68,7 @@ export async function checkToken(config) {
                     },
                     withCredentials: true,
                 });
-            } catch (refreshError) {
-                // 리프레시 실패 시 에러 전달
-                throw refreshError;
-            }
+
 
         } else {
             // 그 외 에러 처리

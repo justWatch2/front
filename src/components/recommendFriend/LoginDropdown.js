@@ -35,6 +35,7 @@ function LoginDropdown({ onClose, onLoginSuccess, loginButtonRect }) {
             console.warn("JSON 파싱 실패 (본문 없음일 수 있음):", e);
           }
           if (res.ok && token) {
+
             localStorage.setItem("jwt", token);
             alert("로그인 성공! JWT 저장됨\nToken: " + token);
 
