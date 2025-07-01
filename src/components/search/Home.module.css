@@ -7,6 +7,15 @@
     font-family: 'Segoe UI', sans-serif;
     background-color: #111;
     color: #fff;
+ 
+}
+
+.searchform {
+    margin:3%;
+    margin-top:10%;
+    
+
+    border-radius: 2%;
 }
 
 .container {
@@ -46,22 +55,39 @@
     background-color: #111;
     color: #fff;
     border-radius: 0.25rem;
+    transition: 0.2s;
+    background-color: #000;
 }
 
+.selectBox:hover, .inputBox:hover {
+    border: #b31f2b 1px solid;
+}
+
+.selectBox:focus, .inputBox:focus {
+    border: #b31f2b 1px solid;
+    outline: 0px;
+}
+
+.selectBox:focus{
+    background-color: #b31f2b;
+    transition: 0.5s;
+}
 .inputBox {
     flex: 1;
+    
 }
 
 .searchButton {
-    border: 1px solid #00bcd4;
-    background-color: transparent;
-    color: #00bcd4;
+    border: 1px solid #b31f2b;
+    background-color: #000;
+    font-weight: bold;
+    color: #b31f2b;
     cursor: pointer;
     transition: background 0.2s;
 }
 
 .searchButton:hover {
-    background-color: #00bcd4;
+    background-color: #b31f2b;
     color: #000;
 }
 
@@ -97,15 +123,21 @@
 
 .resultCard {
     display: flex;
-    background-color: #111;
+    background-color: #000;
     color: #fff;
     border: 1px solid #444;
     border-radius: 0.5rem;
     overflow: hidden;
     cursor: pointer;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+    transition: 0.3s;
 }
-
+.resultCard:hover{
+    border: #b31f2b 1px solid;
+}
+.resultCard *{
+    background-color: #001;
+}
 .resultImage {
     width: 200px;
     height: 300px;
@@ -121,7 +153,7 @@
 }
 
 .resultTitle {
-    color: #00bcd4;
+    color: #ccc;
     font-size: 1.2rem;
     font-weight: bold;
 }
@@ -164,6 +196,7 @@
     color: #fff;
     cursor: pointer;
     border-radius: 0.25rem;
+    transition: 0.3s;
 }
 
 .pagination button:disabled {
@@ -173,8 +206,8 @@
 }
 
 .pagination button:hover:not(:disabled) {
-    background-color: #00bcd4;
-    color: #000;
+    background-color: #b31f2b;
+    border: #000 1px solid;
 }
 
 /* Container for the detail page */

@@ -15,7 +15,6 @@ function Result({list,setFilter}){
             setIsNull(false);
             setPageVO(list?.data?.page);
         }
-        alert(JSON.stringify(list));
     }, [list]);
 
 
@@ -84,7 +83,7 @@ function Result({list,setFilter}){
     return (
         <div>
             {isNull ? (
-                <p className={styles.resultEmpty}>❌ "검색 결과가 없습니다.</p>
+                <p>검색결과가 없습니다.</p>
             ) : (
                 //<div>{movieList}</div>
                 <div className={styles.resultContainer}>

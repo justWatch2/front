@@ -6,7 +6,7 @@ export async function LoadMovie(flag,data,text,signal) {
     const title=text.replaceAll(" ","* ")+"*";
     const genresData = genres?.map((item)=>item.id)
     const yearsData = years.map((item)=>item.PARTITION)
-    const url=flag ? '/api/TV_shows/search': '/api/movie/search';
+    const url=flag ? '/api/non-member/TV_shows/search': '/api/non-member/movie/search';
 
     const options = {
         method: 'GET',
@@ -29,13 +29,22 @@ export async function LoadMovie(flag,data,text,signal) {
         }
     };
 
-    const response= await axios.request(options);
-
-    //alert(JSON.stringify(response.data));
-
-
+    try {
+        
+    const response = await axios.request(options);
     return {
-        ...response,
-        category: flag,
+      ...response,
+      category: flag,
     };
+
+  } catch (error) {
+    if (error.name === "CanceledError" || axios.isCancel?.(error)) {
+      // 요청이 취소되었으면 아무것도 안 함 (조용히 처리)
+      console.log("요청이 취소되었습니다.");
+      return null; // 또는 아무것도 안 넘김
+    } else {
+      // 진짜 오류는 throw로 던짐
+      throw error;
+    }
+  }
 }

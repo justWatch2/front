@@ -2,11 +2,11 @@ import React, { useEffect, useState } from "react";
 import { LoadMovie } from "./LoadMovie.jsx";
 import MOVIE_GENRES from "./data/MovieGenre.js";
 import TV_GENRES from "./data/TVGenre.js";
-import axios from 'axios';
 import { Modal } from "./Modal.jsx";
 import Result from "./Result.jsx";
 import Years from "./data/Years.js";
 import styles from "./Home.module.css";
+import {autoRefreshCheck} from "../../tokenUtils/TokenUtils.js"
 
 function App() {
     const [inputValue, setInputValue] = useState('');
@@ -17,18 +17,22 @@ function App() {
         adult: false,
         years: Years,
         korea: true,
-        page: 0
+        page: 1
     });
     const [results, setResults] = useState(null);
     const [searchList, setSearchList] = useState([]);
     const [showSearchList, setShowSearchList] = useState(false);
-    const [isLogin, setIsLogin] = useState(false);
     const controllerRef = React.useRef(null);
+    const [loading, setLoading] = useState(false);
 
-    const getSearchList = () => {
-        if (isLogin) {
-            axios.get('/api/searchlist', { params: { memberId: "a" } })
-                .then((res) => { setSearchList(res.data); });
+    const getSearchList = async() => {
+        const config={method: "GET",
+                url: "/api/searchlist",};
+        const res= await autoRefreshCheck(config);
+        if (res) {
+            setSearchList(res.data);
+            // console.log("res:", res); // 전체 응답
+            // console.log("res.data:", res.data); // 실제 데이터
         } else {
             const localData = localStorage.getItem('searchHistory');
             setSearchList(localData ? JSON.parse(localData) : []);
@@ -36,6 +40,7 @@ function App() {
     };
 
     useEffect(() => {
+        window.scrollTo(0, 0);
         getSearchList();
     }, []);
 
@@ -49,6 +54,9 @@ function App() {
     };
 
     const handleSearch = async () => {
+        if(inputValue.length==0){
+            return;
+        }
         if (controllerRef.current) {
             controllerRef.current.abort();
         }
@@ -81,17 +89,26 @@ function App() {
         const keyword = inputValue.replace(/[^a-zA-Z0-9가-힣 ]/g, '');
         setSaveValue(keyword);
 
+        setLoading(true);
         const response = await LoadMovie(movieToggle, search, keyword, signal);
+        setLoading(false);
+        if (!response) return; // 요청이 취소된 경우 아무 작업 안 함
         await setResults(response);
         await saveSearchHistory(keyword, signal);
     };
 
-    const saveSearchHistory = (keyword, signal) => {
+    const saveSearchHistory = async (keyword, signal) => {
         if (!keyword) return;
-        if (isLogin) {
-            axios.post("/api/searchlist", { title: keyword, memberId: 'a' }, { signal })
-                .then(res => setSearchList(res.data))
-                .catch((err) => console.log(err));
+        const config= { method: "POST",
+                url: "/api/searchlist",
+                signal,
+                data:{ title: keyword},};
+
+        const res= await autoRefreshCheck(config);
+
+        if (res!=null) {
+            setSearchList(res.data);
+            // alert(JSON.stringify(res));
         } else {
             let localData = localStorage.getItem('searchHistory');
             let list = localData ? JSON.parse(localData) : [];
@@ -149,9 +166,10 @@ function App() {
                         onClick={searchListOn}
                         onBlur={searchListOff}
                     />
-                    {showSearchList && searchList.length > 0 && (
+                    {/* {JSON.stringify(searchList)} */}
+                    {showSearchList && searchList?.length > 0 && (
                         <div className={styles.searchDropdown} style={{ top: '100%', zIndex: 10 }}>
-                            {searchList.map((item, index) => (
+                            {searchList?.map((item, index) => (
                                 <div key={index}
                                      className={styles.searchDropdownItem}
                                      onClick={() => {
@@ -166,12 +184,10 @@ function App() {
                         검색
                     </button>
                 </div>
-
-                {saveValue && (
-                    <h4 className={styles.resultTitle}>🔍 "{saveValue}"의 검색 결과</h4>
-                )}
-
-                <Result list={results} setFilter={setFilterState} />
+                
+                {results? saveValue &&!loading ?
+                <div><h4 className={styles.resultTitle}>🔍 &quot;{saveValue}&quot;의 검색 결과. </h4>
+                <Result list={results} setFilter={setFilterState} /></div>:<span>검색중..{saveValue}.</span>:<></>}
             </div>
         </form>
     );

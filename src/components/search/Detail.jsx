@@ -1,5 +1,5 @@
 import axios from "axios";
-import { useLocation, useNavigate, useParams } from "react-router";
+import { useNavigate, useParams } from "react-router";
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import Row from "./Row.jsx";
@@ -8,83 +8,125 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faHeart, faCheck } from "@fortawesome/free-solid-svg-icons";
 import { FaRegStar, FaStar, FaStarHalfAlt } from 'react-icons/fa';
 import styles from "./Detail.module.css";
-
+import {autoRefreshCheck} from "../../tokenUtils/TokenUtils.js";
 function Detail() {
-    const location = useLocation();
     const { category, id } = useParams();
     const [contents, setContents] = useState(null);
     const [wish, setWish] = useState(false);
     const [view, setView] = useState(false);
-    const [isLogin, setIsLogin] = useState(true);
-    const [memberId, setMemberId] = useState("a");
     const navigate = useNavigate();
-    const vote = 7;
-    const voteCount = 4556;
     const [dependency, setDependency] = useState([]);
+    const token = localStorage.getItem("jwt");
 
     useEffect(() => {
-        const options = category === "movie" ? {
-            method: 'GET',
-            url: 'https://api.themoviedb.org/3/movie/' + id,
-            params: {
-                append_to_response: 'videos,credits,watch/providers',
-                language: 'ko-KR'
-            },
-            headers: {
-                accept: 'application/json',
-                Authorization: 'Bearer eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiI2YjA3MGM5ODk0MTY0MTFhNTEzYzRjNmM3OGFmMDc2OSIsIm5iZiI6MTc0NzIxODk4NS44Miwic3ViIjoiNjgyNDcyMjk0OTMzZmUxNDU1MzMzZjM4Iiwic2NvcGVzIjpbImFwaV9yZWFkIl0sInZlcnNpb24iOjF9.rBrd8bY3jM-JG5YfEsj_A6ApxP3KpzZQpw9yyGnRuUw'
+        const load= async ()=>{
+            const urlBase = category === "movie" ? "movie" : "tv";
+            const res = await axios.request({
+                method: 'GET',
+                url: `https://api.themoviedb.org/3/${urlBase}/${id}`,
+                params: {
+                    append_to_response: 'videos,credits,watch/providers',
+                    language: 'ko-KR'
+                },
+                headers: {
+                    accept: 'application/json',
+                    Authorization: 'Bearer eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiI2YjA3MGM5ODk0MTY0MTFhNTEzYzRjNmM3OGFmMDc2OSIsIm5iZiI6MTc0NzIxODk4NS44Miwic3ViIjoiNjgyNDcyMjk0OTMzZmUxNDU1MzMzZjM4Iiwic2NvcGVzIjpbImFwaV9yZWFkIl0sInZlcnNpb24iOjF9.rBrd8bY3jM-JG5YfEsj_A6ApxP3KpzZQpw9yyGnRuUw'
+                }
+            });
+
+            const commonData = {
+                ...res.data,
+                title: category === "movie" ? res.data.title : res.data.name,
+                original_title: category === "movie" ? res.data.original_title : res.data.original_name,
+                release_date: category === "movie" ? res.data.release_date : res.data.first_air_date,
+                vote: res.data.vote_average,
+                voteCount: res.data.vote_count,
+            };
+
+            // 기본 정보 설정
+            setContents(commonData);
+
+            // 추가적으로 IMDb 평점 보정 (movie일 경우만)
+            if (category === "movie" && res.data.imdb_id) {
+                try {
+                    const voteRes = await axios.get(`/api/non-member/vote/${res.data.imdb_id}`);
+                    setContents(prev => ({
+                        ...prev,
+                        vote: voteRes.data.averageratings ?? prev.vote,
+                        voteCount: voteRes.data.numVotes ?? prev.voteCount,
+                    }));
+                } catch (voteError) {
+                    console.error("IMDb 평점 불러오기 실패:", voteError);
+                }
             }
-        } : {
-            method: 'GET',
-            url: 'https://api.themoviedb.org/3/tv/' + id,
-            params: {
-                append_to_response: 'videos,credits,providers',
-                language: 'ko-KR'
-            },
-            headers: {
-                accept: 'application/json',
-                Authorization: 'Bearer eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiI2YjA3MGM5ODk0MTY0MTFhNTEzYzRjNmM3OGFmMDc2OSIsIm5iZiI6MTc0NzIxODk4NS44Miwic3ViIjoiNjgyNDcyMjk0OTMzZmUxNDU1MzMzZjM4Iiwic2NvcGVzIjpbImFwaV9yZWFkIl0sInZlcnNpb24iOjF9.rBrd8bY3jM-JG5YfEsj_A6ApxP3KpzZQpw9yyGnRuUw'
-            }
-        };
-        axios
-            .request(options)
-            .then(res => {
-                setContents({
-                    ...res.data,
-                    title: category === "movie" ? res.data.title : res.data.name,
-                    original_title: category === "movie" ? res.data.original_title : res.data.original_name,
-                    release_date: category === "movie" ? res.data.release_date : res.data.first_air_date,
-                });
-            })
-            .catch(err => console.error(err));
+        }
+
+        load();
     }, [category, id]);
 
     useEffect(() => {
         if (contents)
-            axios.get(`/api/dependency/${contents.title}/${contents.original_title}`)
+            axios.get(`/api/non-member/dependency/${contents.title}/${contents.original_title}`)
                 .then(res => setDependency(res.data));
     }, [contents]);
 
     useEffect(() => {
-        axios.get(`/api/view/${memberId}/${category}/${id}`)
-            .then(res => setView(res.data));
-        axios.get(`/api/wish/${memberId}/${category}/${id}`)
-            .then(res => setWish(res.data));
-    }, [category, id, memberId]);
+        const loaddetail= async()=>{
+            const Config={
+            method:"GET",
+            url:`/api/detail/${category}/${id}`
+            };
+        const res= await autoRefreshCheck(Config,"");
+        if(res?.data){
+            setView(res.data.view)
+            setWish(res.data.wish)
+            }
+        }
+        loaddetail();
+        // axios.get(`/api/view/${category}/${id}`)
+        //     .then(res => setView(res.data));
+        // axios.get(`/api/wish/${category}/${id}`)
+        //     .then(res => setWish(res.data));
+    }, [category, id]);
 
-    const viewHandler = () => {
-        if (isLogin) {
+    const viewHandler = async() => {
+    
+        if (token) {
             if (view) {
-                axios.delete(`/api/view/${memberId}/${category}/${id}`)
-                    .then(() => setView(false))
-                    .catch(err => console.error(err));
+                setView(false);
+                const config={
+                    method:'DELETE',
+                    url:`/api/view/${category}/${id}`,
+                };
+                const res=await autoRefreshCheck(config)
+                if(res?.status!=200){
+                    alert("통신 에러")
+                    setView(true);
+                }
+                // axios.delete(`/api/view/${category}/${id}`)
+                //     .then(() => setView(false))
+                //     .catch(err => console.error(err));
             } else {
-                axios.post("/api/view", {
-                    memberId: memberId,
-                    category: category,
-                    id: id
-                }).then(() => setView(true))
-                    .catch(err => console.error(err));
+                setView(true);
+                const config={
+                    method:'POST',
+                    url:`/api/view`,
+                    data:{
+                        category: category,
+                        id: id
+                    }
+                };
+                const res=await autoRefreshCheck(config)
+                if(res?.status!=200){
+                     alert("통신 에러")
+                    setView(false);
+                }
+                // axios.post("/api/view", {
+                //     memberId: memberId,
+                //     category: category,
+                //     id: id
+                // }).then(() => setView(true))
+                //     .catch(err => console.error(err));
             }
         } else {
             alert("로그인후 사용가능");
@@ -92,19 +134,41 @@ function Detail() {
         }
     };
 
-    const wishHandler = () => {
-        if (isLogin) {
+    const wishHandler = async () => {
+        if (token) {
             if (wish) {
-                axios.delete(`/api/wish/${memberId}/${category}/${id}`)
-                    .then(() => setWish(false))
-                    .catch(err => console.error(err));
+                setWish(false);
+                const config={
+                    method:'DELETE',
+                    url:`/api/wish/${category}/${id}`,
+                };
+                const res=await autoRefreshCheck(config)
+                if(res?.status!=200){
+                    setWish(true);
+                }
+                // axios.delete(`/api/wish/${memberId}/${category}/${id}`)
+                //     .then(() => setWish(false))
+                //     .catch(err => console.error(err));
             } else {
-                axios.post("/api/wish", {
-                    memberId: memberId,
-                    category: category,
-                    id: id
-                }).then(() => setWish(true))
-                    .catch(err => console.error(err));
+                setWish(true);
+                const config={
+                    method:'POST',
+                    url:`/api/wish`,
+                    data:{
+                        category: category,
+                        id: id
+                    }
+                };
+                const res=await autoRefreshCheck(config)
+                if(res?.status!=200){
+                    setWish(false);
+                }
+                // axios.post("/api/wish", {
+                //     memberId: memberId,
+                //     category: category,
+                //     id: id
+                // }).then(() => setWish(true))
+                //     .catch(err => console.error(err));
             }
         } else {
             alert("로그인후 사용가능");
@@ -112,7 +176,7 @@ function Detail() {
         }
     };
 
-    const { rating, fullStars, hasHalfStar, emptyStars } = calculateRating(vote);
+    const { fullStars, hasHalfStar, emptyStars } = calculateRating(contents?.vote);
 
     const renderProviders = (providers) => {
         if (!providers || providers.length === 0) return null;
@@ -132,7 +196,7 @@ function Detail() {
         );
     };
 
-    if (!contents) return <div className={styles.textLight}>로딩 중...</div>;
+    if (!contents) return <h3 className={styles.textLight}>로딩 중...</h3>;
 
     return (
         <div className={styles.detailWrapper}>
@@ -187,7 +251,7 @@ function Detail() {
                                 .map((_, i) => (
                                     <span key={`empty-${i}`} className={styles.star}><FaRegStar /></span>
                                 ))}
-                            <span className={styles.ratingScore}>{vote}({voteCount})</span>
+                            <span className={styles.ratingScore}>{contents.vote}({contents.voteCount})</span>
                         </p>
                     </div>
                 </div>
@@ -223,14 +287,14 @@ function Detail() {
                         </div>
                     )}
                 </div>
-                <hr />
+                {/* <hr /> */}
                 {contents?.videos?.results?.length > 0 ? (
                     <Row data={contents?.videos?.results}
                          title={"관련 동영상"}
                          fetchUrl={""}
                     ></Row>
                 ) : <br />}
-                <hr />
+                {/* <hr /> */}
                 {contents?.credits?.cast?.length > 0 ? (
                     <Row data={contents?.credits?.cast}
                          title={"출연진"}
@@ -278,5 +342,5 @@ const calculateRating = (voteAverage) => {
         console.log('Invalid or no vote_average:', voteAverage);
     }
 
-    return { rating, fullStars, hasHalfStar, emptyStars };
+    return { fullStars, hasHalfStar, emptyStars };
 };
