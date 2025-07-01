@@ -37,7 +37,11 @@ function LoginDropdown({ onClose, onLoginSuccess, loginButtonRect }) {
             alert("로그인 성공! JWT 저장됨\nToken: " + token);
             // await tryInviteFriend();
             // window.location.href = "/";
-            window.location.reload();
+            // window.location.reload();
+            //  로그인 상태 반영
+            if (onLoginSuccess) onLoginSuccess();
+            //  모달 닫기
+            if (onClose) onClose();
           } else {
             if (res.status === 401) {
               let errorBody = null;
