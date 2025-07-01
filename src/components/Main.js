@@ -1,6 +1,6 @@
 import Banner from "./Banner";
 import Row from "./Row";
-import requests from "../../api/requests";
+import requests from "../api/requests";
 import Footer from "./Footer";
 import React from "react";
 

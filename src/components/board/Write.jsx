@@ -23,6 +23,7 @@ function Write() {
     const [post, setPost] = useState({
         title: "",
         category: "선택 필수",
+        id:"",
         name: "",
         contents: "",
         fileUrl: [], // 기존 파일과 새 파일
@@ -33,6 +34,7 @@ function Write() {
             const newPost = {
                 title: postD.title,
                 category: postD.category,
+                id: postD.id,
                 name: postD.name,
                 contents: postD.contents,
                 fileUrl: postD.fileUrl.map((file) => ({
@@ -50,7 +52,8 @@ function Write() {
                 const newPost = {
                     title: "",
                     category: "선택 필수",
-                    name: res.data.id,
+                    id: res.data.id,
+                    name: res.data.name,
                     contents: "",
                     fileUrl: [],
                 }
@@ -66,13 +69,14 @@ function Write() {
         console.log("Selected file:", newFiles[index]); // 디버깅용
     };
 
-    const backToList = () => {
-        if (no === "new") {
-            navigate("/posts/common");
-        } else {
+    function backToList(){
+        console.log("no: "+no);
+        if (no !== "new") {
             navigate("/post/" + no);
+        } else {
+            navigate("/posts/common");
         }
-    };
+    }
 
     return (
         <Box sx={{
@@ -117,7 +121,7 @@ function Write() {
                         }
                         formData.append("title", values.title);
                         formData.append("category", values.category);
-                        formData.append("name", values.name);
+                        formData.append("id", values.id);
                         formData.append("contents", values.contents);
 
                         values.fileUrl.forEach((file, idx) => {
@@ -138,7 +142,7 @@ function Write() {
                         })
                             .then((res) => {
                                 alert(res.data);
-                                navigate("/post/" + no);
+                                backToList();
                             })
                             .catch((err) => {
                                 alert(err.response?.data || "에러 발생");

@@ -1,14 +1,14 @@
 import React, {useContext, useEffect, useState} from "react";
 import "./Nav.css";
-import LoginDropdown from "./LoginDropdown";
-import ProfileDropdown from "./ProfileDropdown";
+import LoginDropdown from "./recommendFriend/LoginDropdown";
+import ProfileDropdown from "./recommendFriend/ProfileDropdown";
 import {Link, useNavigate} from "react-router-dom";
-import logo from "../search/assets/waffle.png";
-import {RecommendationContext} from "../recommendMain/RecommendationContext";
-import "../recommendMain/styles/Header.css";
-import profileLogo from "./img/ProfileLogo.png";
+import logo from "./search/assets/waffle.png";
+import {RecommendationContext} from "./recommendMain/RecommendationContext";
+import "./recommendMain/styles/Header.css";
+import profileLogo from "./recommendFriend/img/ProfileLogo.png";
 import axios from "axios";
-import {checkToken} from "../../tokenUtils/TokenUtil4Post";
+import {checkToken} from "../tokenUtils/TokenUtil4Post";
 
 export default function Nav({
                                 onClickRecommend,

@@ -1,12 +1,14 @@
 
 import React, { useState, useEffect } from "react";
 import SignUP from "../login/SignUp"
+import {useNavigate} from "react-router-dom";
 
 function LoginDropdown({ onClose, onLoginSuccess, loginButtonRect }) {
   const [id, setId] = useState("");
   const [password, setPassword] = useState("");
   //회원가입
   const [showSignUp, setShowSignUp] = useState(false);
+  const navigate = useNavigate();
 
   //로그인 부분
   function handleLogin() {
@@ -34,7 +36,8 @@ function LoginDropdown({ onClose, onLoginSuccess, loginButtonRect }) {
             localStorage.setItem("jwt", token);
             alert("로그인 성공! JWT 저장됨\nToken: " + token);
             // await tryInviteFriend();
-            window.location.href = "/";
+            // window.location.href = "/";
+            window.location.reload();
           } else {
             if (res.status === 401) {
               let errorBody = null;
