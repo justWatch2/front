@@ -15,6 +15,8 @@ import {
     Typography,
 } from "@mui/material";
 
+// 커밋 확인용
+
 function Posts() {
     const {cat} = useParams();
     const navigate = useNavigate();
