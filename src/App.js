@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from "react";
 import "./App.css";
-import Nav from "./components/recommendFriend/Nav";
+import Nav from "./components/Nav";
 import FriendRecommend from "./components/recommendFriend/FriendRecommend";
-import {Route, BrowserRouter as Router, Routes} from "react-router-dom";
-import Main from "./components/recommendFriend/Main";
+import {Route, BrowserRouter as Router, Routes, useNavigate} from "react-router-dom";
+import Main from "./components/Main";
 import Home  from "./components/search/Home.jsx";
 import Detail from "./components/search/Detail";
 import Posts from "./components/board/Posts";
@@ -21,10 +21,24 @@ function App() {
 
   useEffect(() => {
     const token = localStorage.getItem("jwt");
+    const urlParams = new URLSearchParams(window.location.search);
+    const uuidFromUrl = urlParams.get("uuid");
+
     if (token) {
       setIsLoggedIn2(true);
+      // tryInviteFriend();
     }
+
+    //urlParmas => uuid=sdfsdfd 이런식으로 들어가 있다
+    // uuidTokens 안에 들어가 있는 토큰이 1개이상이면 초대장을 저장한다.
+    if (uuidFromUrl) {
+      localStorage.setItem(urlParams, urlParams);
+      alert("uuid 초대 저장");
+      alert(urlParams);
+    }
+
   }, []);
+
 
   const handleLoginClick = () => {
     setIsLoggedIn2(true); // 임시로 로그인 상태 변경
@@ -53,7 +67,6 @@ function App() {
             showProfileDropdown={showProfileDropdown}
         />
         <Routes>
-          <Route path="/**" element={<Main/>}></Route>
           <Route path="/" element={<Main/>}></Route>
 
           <Route path="/recommend/main" element={<RecommendReal/>}></Route>
@@ -71,14 +84,6 @@ function App() {
 
         </Routes>
       </Router>
-
-      {/*{selectedMovie && (*/}
-      {/*    <MovieModal*/}
-      {/*        movie={selectedMovie}*/}
-      {/*        onClose={closeModal}*/}
-      {/*        onDetails={goToDetails}*/}
-      {/*    />*/}
-      {/*)}*/}
     </div>
   );
 }
