@@ -10,9 +10,7 @@ function LoginDropdown({ onClose, onLoginSuccess, loginButtonRect }) {
   //회원가입
   const [showSignUp, setShowSignUp] = useState(false);
 
-  // 자동 친구 추가 기능 state 추가
-  const [invites, setInvites] = useState([]);
-  const [showInviteModal, setShowInviteModal] = useState(false);
+
 
   //로그인 부분
   function handleLogin() {
@@ -39,9 +37,19 @@ function LoginDropdown({ onClose, onLoginSuccess, loginButtonRect }) {
           if (res.ok && token) {
             localStorage.setItem("jwt", token);
             alert("로그인 성공! JWT 저장됨\nToken: " + token);
-            //친구 초대 부분
-            await tryInviteFriend();
+
+            // //  로그인 상태 반영
+
+
             // window.location.href = "/";
+
+              if (onLoginSuccess) onLoginSuccess();
+              //
+              // //  모달 닫기
+              if (onClose) onClose();
+
+
+
           } else {
             if (res.status === 401) {
               let errorBody = null;
@@ -65,48 +73,7 @@ function LoginDropdown({ onClose, onLoginSuccess, loginButtonRect }) {
   };
 
   //친구 자동 추가 부분
-  const tryInviteFriend = async () => {
-    // uuid로 시작하는 토큰들 싸그리 모아서 확인한다.
-    const uuidTokens = [];
 
-    for (let i = 0; i < localStorage.length; i++) {
-      const key = localStorage.key(i);
-      if (key.startsWith("uuid")) {
-        uuidTokens.push({
-          key: key,
-          value: localStorage.getItem(key),
-        });
-      }
-    }
-    if (uuidTokens.length < 1) {
-
-      return;
-    }
-    try {
-      const response = await autoRefreshCheck({
-        url: "http://localhost:8080/api/friend/nicknameByUuids",
-        method: "POST",
-        data: {
-          uuids: uuidTokens.map((item) => item.value),
-        },
-        headers: {
-          "Content-Type": "application/json",
-        },
-      });
-
-      const enriched = uuidTokens.map((item) => ({
-        key: item.key,
-        uuid: item.value,
-        nickname: response.data[item.value] || "알 수 없음",
-      }));
-
-      setInvites(enriched);
-      setShowInviteModal(true);
-
-    } catch (error) {
-      console.error("초대 닉네임 로드 실패:", error);
-    }
-  };
 
 
   const handleSignUp = () => {
@@ -134,15 +101,17 @@ function LoginDropdown({ onClose, onLoginSuccess, loginButtonRect }) {
         `width=${width},height=${height},left=${left},top=${top}`
     );
 
-    const messageHandler = (event) => {
+    const messageHandler = async (event) => {
       // 실제 운영 시 event.origin 체크 필수
       if (event.data?.token) {
         localStorage.setItem("jwt", event.data.token);
+
         //  로그인 상태 반영
-        if (onLoginSuccess) onLoginSuccess();
+        if (onLoginSuccess) await onLoginSuccess();
 
         //  모달 닫기
-        if (onClose) onClose();
+        if (onClose) await onClose();
+
 
         //  이벤트 리스너 제거
         window.removeEventListener("message", messageHandler);
@@ -217,16 +186,7 @@ function LoginDropdown({ onClose, onLoginSuccess, loginButtonRect }) {
         </button>
       </div>
 
-      {/*자동 친구 추가 모달 창 부분*/}
-      {showInviteModal && (
-      <InviteModal
-          invites={invites}
-          onAccept={(acceptedKey) => {
-            setInvites((prev) => prev.filter((inv) => inv.key !== acceptedKey));
-          }}
-          onClose={() => setShowInviteModal(false)}
-      />
-      )}
+
     </div>
 
 

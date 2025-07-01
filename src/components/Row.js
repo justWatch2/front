@@ -41,7 +41,7 @@ export default function Row({ isLargeRow, title, id, fetchUrl}){
             {movies.map((movie) => (
                 <div
                     key={movie.id}
-                    className="row-item"
+                    className=""
                     onClick={(event) => {
                         // if (onMovieClick) {
                         //     onMovieClick(item, event);
