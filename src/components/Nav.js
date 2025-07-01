@@ -49,6 +49,24 @@ export default function Nav({
         }
     };
 
+     function handleProfileImg() {
+        if (isLoggedIn2) {
+            checkToken({
+                method: "get",
+                url: "http://localhost:8080/api/getProfileImg",
+            }).then(res => {
+                console.log(res.data);
+                if (res.data != null) {
+                    setProfileImg(res.data);
+                }
+            })
+        }
+    }
+
+    useEffect(() => {
+        handleProfileImg();
+    }, [isLoggedIn2]);
+
 
     useEffect(() => {
         const handleScroll = () => {
@@ -188,7 +206,7 @@ export default function Nav({
                     <>
                         <img
                             alt="User profile"
-                            src={profileLogo}
+                            src={profileImg !== "" ? profileImg : profileLogo}
                             className="nav__avater"
                             onClick={onProfileClick}
                         />
