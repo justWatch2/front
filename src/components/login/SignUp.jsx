@@ -23,19 +23,22 @@ function SignUp({onClose}) {
 
     const signForm = {
         id: "",
-        flag: false,
+        idFlag: false,
         pass: "",
         passR: "",
+        name: "",
+        nameFlag: false,
         img: "",
+
     };
 
     function checkId(values, setFieldValue) {
         axios.get("/api/checkId?id=" + values.id).then((res) => {
             if (res.data === "success") {
-                setFieldValue("flag", true);
+                setFieldValue("idFlag", true);
                 alert("사용 가능한 아이디입니다.");
             } else {
-                setFieldValue("flag", false);
+                setFieldValue("idFlag", false);
                 alert("이미 사용 중인 아이디입니다.");
             }
         });
@@ -57,6 +60,18 @@ function SignUp({onClose}) {
             },
         },
     });
+
+    function checkName(values, setFieldValue) {
+        axios.get("/api/checkName?name=" + values.name).then((res) => {
+            if (res.data === "success") {
+                setFieldValue("nameFlag", true);
+                alert("사용 가능한 닉네임입니다.");
+            } else {
+                setFieldValue("nameFlag", false);
+                alert("이미 사용 중인 닉네임입니다.");
+            }
+        });
+    }
 
     return (
         <ThemeProvider theme={darkTheme}>
@@ -97,11 +112,14 @@ function SignUp({onClose}) {
                     initialValues={signForm}
                     validate={(values) => {
                         const errors = {};
-                        if (!values.flag) {
+                        if (!values.idFlag) {
                             errors.id = "아이디 중복 확인이 필요합니다.";
                         }
                         if (values.pass !== values.passR) {
                             errors.passR = "비밀번호가 일치하지 않습니다.";
+                        }
+                        if (values.nameFlag === "") {
+                            errors.name = "닉네임 중복 확인이 필요합니다.";
                         }
                         return errors;
                     }}
@@ -110,6 +128,7 @@ function SignUp({onClose}) {
                         const formData = new FormData();
                         formData.append("id", values.id);
                         formData.append("pass", values.pass);
+                        formData.append("name", values.name);
                         formData.append("img", img);
 
                         axios
@@ -194,9 +213,38 @@ function SignUp({onClose}) {
                                                 ) : null
                                             }/>
                                     )}
-
-
                                 </Field>
+                                <Field name="name">
+                                    {({field}) => (
+                                        <TextField
+                                            {...field}
+                                            label="닉네임"
+                                            variant="outlined"
+                                            fullWidth
+                                            error={touched.name && Boolean(errors.name)}
+                                            helperText={
+                                                touched.name && errors.name ? (
+                                                    <span style={{fontSize: "0.9rem"}}>
+                                                        {errors.name}
+                                                    </span>
+                                                ) : null
+                                            }/>
+                                    )}
+                                </Field>
+                                <Button
+                                    variant="contained"
+                                    onClick={() => checkName(values, setFieldValue)}
+                                    sx={{
+                                        backgroundColor: "primary.main",
+                                        color: "#fff",
+                                        whiteSpace: "nowrap",
+                                        "&:hover": {
+                                            backgroundColor: "#8d1a24", // 약간 더 어두운 빨강
+                                        },
+                                    }}
+                                >
+                                    중복확인
+                                </Button>
 
                                 {/* 이미지 업로드 */}
                                 <Box>

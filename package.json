@@ -18,7 +18,6 @@
     "axios": "^1.9.0",
     "bootstrap": "^5.3.7",
     "formik": "^2.4.6",
-    "jwt-decode": "^4.0.0",
     "qs": "^6.14.0",
     "react": "^19.1.0",
     "react-bootstrap": "^2.10.10",
@@ -33,10 +32,10 @@
     "web-vitals": "^2.1.4"
   },
   "scripts": {
-    "start": "../react-netflix-clone/node_modules/.bin/react-scripts start",
-    "build": "../react-netflix-clone/node_modules/.bin/react-scripts build",
-    "test": "../react-netflix-clone/node_modules/.bin/react-scripts test",
-    "eject": "../react-netflix-clone/node_modules/.bin/react-scripts eject"
+    "start": "react-scripts start",
+    "build": "react-scripts build",
+    "test": "react-scripts test",
+    "eject": "react-scripts eject"
   },
   "eslintConfig": {
     "extends": [
