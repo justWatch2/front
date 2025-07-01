@@ -1,14 +1,16 @@
 
 import React, { useState, useEffect } from "react";
 import SignUP from "../login/SignUp"
-import {useNavigate} from "react-router-dom";
+import {autoRefreshCheck} from "../../tokenUtils/TokenUtils";
+import InviteModal from "./InviteModal";
 
 function LoginDropdown({ onClose, onLoginSuccess, loginButtonRect }) {
   const [id, setId] = useState("");
   const [password, setPassword] = useState("");
   //회원가입
   const [showSignUp, setShowSignUp] = useState(false);
-  const navigate = useNavigate();
+
+
 
   //로그인 부분
   function handleLogin() {
@@ -35,13 +37,19 @@ function LoginDropdown({ onClose, onLoginSuccess, loginButtonRect }) {
           if (res.ok && token) {
             localStorage.setItem("jwt", token);
             alert("로그인 성공! JWT 저장됨\nToken: " + token);
-            // await tryInviteFriend();
+
+            // //  로그인 상태 반영
+
+
             // window.location.href = "/";
-            // window.location.reload();
-            //  로그인 상태 반영
-            if (onLoginSuccess) onLoginSuccess();
-            //  모달 닫기
-            if (onClose) onClose();
+
+
+              if (onLoginSuccess) onLoginSuccess();
+              //
+              // //  모달 닫기
+              if (onClose) onClose();
+
+
           } else {
             if (res.status === 401) {
               let errorBody = null;
@@ -63,6 +71,10 @@ function LoginDropdown({ onClose, onLoginSuccess, loginButtonRect }) {
         .catch(error => {
         });
   };
+
+  //친구 자동 추가 부분
+
+
 
   const handleSignUp = () => {
     setShowSignUp(true);
@@ -89,15 +101,17 @@ function LoginDropdown({ onClose, onLoginSuccess, loginButtonRect }) {
         `width=${width},height=${height},left=${left},top=${top}`
     );
 
-    const messageHandler = (event) => {
+    const messageHandler = async (event) => {
       // 실제 운영 시 event.origin 체크 필수
       if (event.data?.token) {
         localStorage.setItem("jwt", event.data.token);
+
         //  로그인 상태 반영
-        if (onLoginSuccess) onLoginSuccess();
+        if (onLoginSuccess) await onLoginSuccess();
 
         //  모달 닫기
-        if (onClose) onClose();
+        if (onClose) await onClose();
+
 
         //  이벤트 리스너 제거
         window.removeEventListener("message", messageHandler);
@@ -171,6 +185,8 @@ function LoginDropdown({ onClose, onLoginSuccess, loginButtonRect }) {
           ×
         </button>
       </div>
+
+
     </div>
 
 

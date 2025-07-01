@@ -7,8 +7,8 @@ import logo from "./search/assets/waffle.png";
 import {RecommendationContext} from "./recommendMain/RecommendationContext";
 import "./recommendMain/styles/Header.css";
 import profileLogo from "./recommendFriend/img/ProfileLogo.png";
-import axios from "axios";
-import {checkToken} from "../tokenUtils/TokenUtil4Post";
+import InviteModal from "./recommendFriend/InviteModal";
+import {autoRefreshCheck} from "../tokenUtils/TokenUtils";
 
 export default function Nav({
                                 onClickRecommend,
@@ -17,13 +17,14 @@ export default function Nav({
                                 onLogout,
                                 onProfileClick,
                                 showProfileDropdown,
-
                             }) {
     const [search, setSearch] = useState("");
     const [show, setShow] = useState(false);
     const [showLoginDropdown, setShowLoginDropdown] = useState(false);
-    const [profileImg, setProfileImg] = useState("");
     const navigate = useNavigate();
+// 자동 친구 추가 기능 state 추가
+    const [invites, setInvites] = useState([]);
+    const [showInviteModal, setShowInviteModal] = useState(false);
 
     const {
         clearRecommendations,
@@ -49,24 +50,6 @@ export default function Nav({
     };
 
 
-    function handleProfileImg() {
-        if (isLoggedIn2) {
-            checkToken({
-                method: "get",
-                url: "http://localhost:8080/api/getProfileImg",
-            }).then(res => {
-                console.log(res.data);
-                if (res.data != null) {
-                    setProfileImg(res.data);
-                }
-            })
-        }
-    }
-
-    useEffect(() => {
-        handleProfileImg();
-    }, [isLoggedIn2]);
-
     useEffect(() => {
         const handleScroll = () => {
             setShow(window.scrollY > 50);
@@ -77,11 +60,66 @@ export default function Nav({
     }, []);
 
     // 로그인 후 드롭다운 닫기와 상태 변경을 한 번에 처리
-    const handleLoginSuccess = () => {
-        console.log('1234');
+
+    const handleLoginSuccess = async () => {
         onLoginClick(); // RecommendReal 상태 변경
         setShowLoginDropdown(false); // 드롭다운 닫기
+
+        await tryInviteFriend()
     };
+
+    const tryInviteFriend = async () => {
+        // uuid로 시작하는 토큰들 싸그리 모아서 확인한다.
+        const uuidTokens = [];
+
+        for (let i = 0; i < localStorage.length; i++) {
+            const key = localStorage.key(i);
+            if (key.startsWith("uuid")) {
+                uuidTokens.push({
+                    key: key,
+                    value: localStorage.getItem(key),
+                });
+            }
+        }
+        if (uuidTokens.length < 1) {
+
+            return;
+        }
+        try {
+            const response = await autoRefreshCheck({
+                url: "http://localhost:8080/api/friend/nicknameByUuids",
+                method: "POST",
+                data: {
+                    uuids: uuidTokens.map((item) => item.value),
+                },
+                headers: {
+                    "Content-Type": "application/json",
+                },
+            });
+
+            const enriched = uuidTokens.map((item) => ({
+                key: item.key,
+                uuid: item.value,
+                nickname: response.data[item.value] || "알 수 없음",
+            }));
+
+
+            setInvites(enriched);
+            setShowInviteModal(true);
+
+        } catch (error) {
+            console.error("초대 닉네임 로드 실패:", error);
+        }
+    };
+
+    function handleRecommend() {
+        const jwt = localStorage.getItem("jwt");
+        if (jwt) {
+            navigate("/recommend/friend");
+        } else {
+            alert("로그인이 필요합니다.")
+        }
+    }
 
     return (
         <nav className={`nav2 ${show && "nav2__black"}`}>
@@ -98,15 +136,28 @@ export default function Nav({
                 <Link style={{textDecoration: "none"}} to={"/recommend/main"}><h2 className="nav__recommend">
                     추천
                 </h2></Link>
-                <Link style={{textDecoration: "none"}} to={"/recommend/friend"}><h2 className="nav__recommend">
-                    친구 추천
-                </h2></Link>
+                <h2 className="nav__recommend" onClick={handleRecommend}>
+                    추천 with Friends
+                </h2>
 
-                <Link style={{textDecoration: "none"}} to={"/posts/common"}><h2 className="nav__recommend">
+                <Link style={{textDecoration: "none"}} to={"/post"}><h2 className="nav__recommend">
                     게시판
                 </h2></Link>
             </div>
 
+            {/*자동 친구 추가 모달 창 부분*/}
+            {showInviteModal && (
+                <InviteModal
+                    invites={invites}
+                    onAccept={(acceptedKey) => {
+                        setInvites((prev) => prev.filter((inv) => inv.key !== acceptedKey));
+                    }}
+                    onClose={() => {
+                        setShowInviteModal(false);
+
+                    }}
+                />
+            )}
             <button
                 className={`header-icon-button member-mode-toggle ${isMemberModeActive ? 'active glowing-rainbow' : ''}`}
                 onClick={toggleMemberMode}
@@ -137,7 +188,7 @@ export default function Nav({
                     <>
                         <img
                             alt="User profile"
-                            src={profileImg !== "" ? profileImg : profileLogo}
+                            src={profileLogo}
                             className="nav__avater"
                             onClick={onProfileClick}
                         />
