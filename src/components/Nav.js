@@ -9,6 +9,7 @@ import "./recommendMain/styles/Header.css";
 import profileLogo from "./recommendFriend/img/ProfileLogo.png";
 import InviteModal from "./recommendFriend/InviteModal";
 import {autoRefreshCheck} from "../tokenUtils/TokenUtils";
+import {checkToken} from "../tokenUtils/TokenUtil4Post";
 
 export default function Nav({
                                 onClickRecommend,
@@ -24,6 +25,7 @@ export default function Nav({
     const navigate = useNavigate();
 // 자동 친구 추가 기능 state 추가
     const [invites, setInvites] = useState([]);
+    const [profileImg, setProfileImg] = useState(null);
     const [showInviteModal, setShowInviteModal] = useState(false);
 
     const {
@@ -48,6 +50,24 @@ export default function Nav({
             clearRecommendations();
         }
     };
+
+     function handleProfileImg() {
+        if (isLoggedIn2) {
+            checkToken({
+                method: "get",
+                url: "http://localhost:8080/api/getProfileImg",
+            }).then(res => {
+                console.log(res.data);
+                if (res.data != null) {
+                    setProfileImg(res.data);
+                }
+            })
+        }
+    }
+
+    useEffect(() => {
+        handleProfileImg();
+    }, [isLoggedIn2]);
 
 
     useEffect(() => {
@@ -140,7 +160,7 @@ export default function Nav({
                     추천 with Friends
                 </h2>
 
-                <Link style={{textDecoration: "none"}} to={"/post"}><h2 className="nav__recommend">
+                <Link style={{textDecoration: "none"}} to={"/posts/common"}><h2 className="nav__recommend">
                     게시판
                 </h2></Link>
             </div>
@@ -188,7 +208,7 @@ export default function Nav({
                     <>
                         <img
                             alt="User profile"
-                            src={profileLogo}
+                            src={profileImg !== "" ? profileImg : profileLogo}
                             className="nav__avater"
                             onClick={onProfileClick}
                         />
