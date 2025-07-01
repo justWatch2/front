@@ -17,18 +17,14 @@ import {
 import ThumbUpIcon from "@mui/icons-material/ThumbUp";
 import {checkToken} from "../../tokenUtils/TokenUtil4Post";
 
-// key2 브랜치
-
 function Post() {
     const navigate = useNavigate();
     const {postNo} = useParams();
     const [id, setId] = useState(null);
-    const [name, setName] = useState(null);
     const [categoryName, setCategoryName] = useState("");
     const [post, setPost] = useState({
         title: "",
         category: "",
-        id: "",
         name: "",
         contents: "",
         count: 0,
@@ -56,7 +52,6 @@ function Post() {
                 const newPost = {
                     title: res.data.post.title,
                     category: res.data.post.category,
-                    id: res.data.post.id,
                     name: res.data.post.name,
                     contents: res.data.post.contents,
                     count: res.data.post.count,
@@ -73,7 +68,6 @@ function Post() {
                 }));
                 setReplys(updatedReplys);
                 setId(res.data.id);
-                setName(res.data.name);
                 handleCategoryName(res.data.post.category);
             })
             .catch((err) => console.log(err));
@@ -144,7 +138,7 @@ function Post() {
     }
 
     function HandlerPostEdit() {
-        if (id === post.id) {
+        if (id === post.name) {
             return (
                 <Button variant="outlined" sx={{
                     color: "#ffffff",
@@ -170,7 +164,7 @@ function Post() {
     }
 
     function ReplyReturn() {
-        if (replys != null && replys.length > 0) {
+        if(replys!=null && replys.length >0) {
             return (
                 <Box sx={{mt: 3}}>
 
@@ -227,14 +221,14 @@ function Post() {
         return null;
     }
 
-    function Reply({id, name}) {
+    function Reply({id}) {
         return (
             <Box sx={{mt: 3}}>
                 {/*<Typography variant="h6" sx={{ color: "#ffffff", fontSize: "1.5rem", fontWeight: "bold", mb: 1 }}>*/}
                 {/*    댓글 작성*/}
                 {/*</Typography>*/}
                 <Formik
-                    initialValues={{postNo, id: id, contents: "", name: name}}
+                    initialValues={{postNo, name: id, contents: ""}}
                     validate={(values) => {
                         const errors = {};
                         if (!values.contents) errors.contents = "내용을 입력하세요";
@@ -244,7 +238,7 @@ function Post() {
                         setSubmitting(true);
                         const formData = new FormData();
                         formData.append("postNo", values.postNo);
-                        formData.append("name", values.id);
+                        formData.append("name", values.name);
                         formData.append("contents", values.contents);
                         checkToken({
                             method: 'post',
@@ -265,7 +259,7 @@ function Post() {
                                         <TextField
                                             {...field}
                                             label="작성자"
-                                            value={name === "noName"? "":name}
+                                            value={id}
                                             InputProps={{readOnly: true}}
                                             variant="outlined"
                                             InputLabelProps={{shrink: true}}
@@ -401,7 +395,7 @@ function Post() {
                         ))}
                     </Box>
                 )}
-                <br/>
+                <br />
                 <Typography sx={{fontSize: "1.2rem", whiteSpace: "pre-wrap", mb: 2, color: "#ffffff"}}>
                     {post.contents}
                 </Typography>
@@ -438,7 +432,7 @@ function Post() {
                 댓글
             </Typography>
             <ReplyReturn/>
-            <Reply id={id} name={name}/>
+            <Reply id={id}/>
         </Box>
     );
 }
