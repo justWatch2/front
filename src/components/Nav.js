@@ -35,7 +35,7 @@ export default function Nav() {
                 <Link style={{ textDecoration: "none" }} to={"/search"}><h2 className="nav__recommend">검색</h2></Link>
                 <Link style={{ textDecoration: "none" }} to={"/recommend/main"}><h2 className="nav__recommend">추천</h2></Link>
                 <Link style={{ textDecoration: "none" }} to={"/recommend/friend"}><h2 className="nav__recommend">친구 추천</h2></Link>
-                <Link style={{ textDecoration: "none" }} to={"/post"}><h2 className="nav__recommend">게시판</h2></Link>
+                <Link style={{ textDecoration: "none" }} to={"/posts/common"}><h2 className="nav__recommend">게시판</h2></Link>
             </div>
             <div className="nav__right">
                 {/* 3. Context의 isLoggedIn 상태에 따라 UI를 분기합니다. */}
