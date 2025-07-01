@@ -1038,6 +1038,7 @@ const FriendRecommend = () => {
 
     // 1. 토큰에서 내 멤버 아이디 추출
     useEffect(() => {
+
         const token = localStorage.getItem('jwt');
         if (token) {
             try {
