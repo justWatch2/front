@@ -77,16 +77,27 @@ function TimeRecommendation() {
 
                 responseData = await MemberRecommendApi(payload);
                 requestRecommendation({
-                    recommendationId: 'time',
-                    data: responseData,
+                    recommendationId: 'user',
+                    data: responseData.data,
                     isMemberModeActiveAtCall: true
                 });
 
-            } else {
-                responseData = await timeRecommendApi(genresMovie, genresTV);
+            }else {
+                // 1. API 응답을 response 변수에 저장
+                const response = await timeRecommendApi(genresMovie, genresTV);
+
+                // 2. MBTI 컴포넌트처럼, 응답 데이터를 가공하여 새로운 data 객체 생성
+                const data = {
+                    domesticMovies: response.data.domesticMovies || [],
+                    internationalMovies: response.data.internationalMovies || [],
+                    domesticTV: response.data.domesticTV || [],
+                    internationalTV: response.data.internationalTV || [],
+                };
+
+                // 3. 가공된 data 객체를 전달
                 requestRecommendation({
                     recommendationId: 'time',
-                    data: responseData,
+                    data: data, // <-- 가공된 데이터를 전달
                     isMemberModeActiveAtCall: false
                 });
             }

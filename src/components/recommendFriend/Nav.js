@@ -23,6 +23,11 @@ export default function Nav() {
         return () => window.removeEventListener("scroll", handleScroll);
     }, []);
 
+
+    const storedImgUrl = localStorage.getItem("img");
+
+    const profileImageSrc = storedImgUrl ? "http://localhost:8080" + storedImgUrl : profileLogo;
+
     return (
         <nav className={`nav2 ${show && "nav2__black"}`}>
             <div className="nav__left">
@@ -43,7 +48,7 @@ export default function Nav() {
                     <>
                         {/* 4. Context의 userId를 표시합니다. */}
                         <span className="nav__user-id">{userId}님</span>
-                        <img alt="User profile" src={profileLogo} className="nav__avater" onClick={() => setShowProfileDropdown(prev => !prev)} />
+                        <img alt="User profile" src={profileImageSrc} className="nav__avater" onClick={() => setShowProfileDropdown(prev => !prev)} />
                         {/* 5. 로그아웃 버튼에 Context의 handleLogout 함수를 연결합니다. */}
                         {showProfileDropdown && <ProfileDropdown onLogout={() => { handleLogout(); setShowProfileDropdown(false); }} />}
                     </>

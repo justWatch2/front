@@ -1,5 +1,6 @@
 import React, { createContext, useState, useCallback, useEffect } from 'react';
 import {autoRefreshCheck} from "../../tokenUtils/TokenUtils";
+import {findmemberId} from "./api/UserApi";
 
 export const RecommendationContext = createContext();
 
@@ -8,7 +9,7 @@ export const RecommendationProvider = ({ children }) => {
     const [isLoggedIn, setIsLoggedIn] = useState(false);
     const [userId, setUserId] = useState(null);
     const [isMemberModeActive, setIsMemberModeActive] = useState(false);
-
+    const [userImgUrl, setUserImgUrl] = useState(null);
     const [recommendations, setRecommendations] = useState({});
     const [defaultPosters, setDefaultPosters] = useState([]);
     const [isLoading, setIsLoading] = useState(false);
@@ -38,11 +39,22 @@ export const RecommendationProvider = ({ children }) => {
     }, [isLoggedIn]);
 
     // 3. 로그인 성공 시 호출될 함수
-    const handleLogin = useCallback((token, loggedInUserId) => {
+    const handleLogin = useCallback(async (token, loggedInUserId) => {
         localStorage.setItem('jwt', token);
-        localStorage.setItem('userId', loggedInUserId);
-        setIsLoggedIn(true);
-        setUserId(loggedInUserId);
+        const response = await  findmemberId();
+        console.log(response);
+        console.log(response.data);
+        if (response && loggedInUserId) {
+            setIsLoggedIn(true);
+        }
+        localStorage.setItem('userId', response.memberName);
+        // localStorage.setItem('userName', response.userId);
+        if(response.imgUrl != null){
+            localStorage.setItem("img",response.imgUrl);
+        }
+
+        setUserId(response.memberName);
+
     }, []);
 
     // 4. 로그아웃 시 호출될 함수
@@ -63,6 +75,7 @@ export const RecommendationProvider = ({ children }) => {
             // API 성공/실패 여부와 관계없이 항상 실행
             localStorage.removeItem('jwt');
             localStorage.removeItem('userId');
+            localStorage.removeItem("img");
             setIsLoggedIn(false);
             setUserId(null);
         }
@@ -80,6 +93,7 @@ export const RecommendationProvider = ({ children }) => {
     // 기타 추천 관련 함수들
     const openRecommendation = useCallback((type) => setActiveRecommendation(type), []);
     const closeRecommendation = useCallback(() => setActiveRecommendation(null), []);
+
     const requestRecommendation = useCallback(({ recommendationId, data, isMemberModeActiveAtCall }) => {
         const processedData = {};
         if (isMemberModeActiveAtCall || recommendationId === 'complex') {
@@ -110,7 +124,7 @@ export const RecommendationProvider = ({ children }) => {
         closeRecommendation, requestRecommendation, clearRecommendations,
         selectedCategory, setSelectedCategory, selectedMediaType, setSelectedMediaType,
         selectedRegion, setSelectedRegion, selectedAgeRating, setSelectedAgeRating,
-        handleLogin, handleLogout, toggleMemberMode
+        handleLogin, handleLogout, toggleMemberMode,userImgUrl,setUserImgUrl
     };
 
     return (

@@ -27,6 +27,7 @@ const MainContent = () => {
         selectedCategory,
         setSelectedCategory,
         isLoading,
+        userId,
         isMemberModeActive,
     } = useContext(RecommendationContext);
 
@@ -42,7 +43,8 @@ const MainContent = () => {
         { id: 'weather', label: '오늘같은 날씨엔?', type: 'weather' },
         { id: 'time', label: '이시간엔?', type: 'time' },
         { id: 'mbti', label: '내 MBTI엔?', type: 'mbti' },
-        { id: 'complex', label: '이중엔 있겠지?', type: 'complex' },
+        { id: 'complex', label: '이중엔 있겠지?', type: 'complex' }
+
     ];
 
     const recommendationComponents = {
@@ -115,7 +117,22 @@ const MainContent = () => {
         }
     }, [selectedCategory, openRecommendation, clearRecommendations, setSelectedCategory]);
 
-    const getSectionTitle = (id) => ({ weather: '오늘같은 날씨엔?', time: '이시간엔?', mbti: '내 MBTI엔?', complex: '이중엔 있겠지?' }[id] || '');
+    const getSectionTitle = (id) => {
+        // 회원 추천의 경우 (id가 'user'일 때) 동적으로 제목을 생성합니다.
+        if (isMemberModeActive) {
+            return `${userId || '회원'}님을 위한 맞춤 추천`;
+        }
+
+        // 기존의 일반 추천 제목들입니다.
+        const titles = {
+            weather: '오늘같은 날씨엔?',
+            time: '이시간엔?',
+            mbti: '내 MBTI엔?',
+            complex: '이중엔 있겠지?'
+        };
+        return titles[id] || ''; // id가 일치하지 않을 경우 빈 문자열을 반환합니다.
+    };
+
     const getRowTitle = (key) => {
         const type = key.includes('TV') ? 'tv' : 'movies';
         const region = key.includes('domestic') ? 'domestic' : 'international';
@@ -172,11 +189,13 @@ const MainContent = () => {
                             Object.entries(recommendations).map(([id, data]) => (
                                 <section key={id} className="recommendation-section">
                                     <h2 className="section-title">{getSectionTitle(id)}</h2>
-                                    {(isMemberModeActive || id === 'complex') && data.complexList?.length > 0 ? (
-                                        <ComplexGrid items={data.complexList} onMovieClick={handleMovieClick} />
+                                    {(isMemberModeActive || id === 'complex') && (data.complexList || data.userSelectedList )?.length > 0 ? (
+                                        <ComplexGrid items={data.complexList ||data.userSelectedList} onMovieClick={handleMovieClick} />
                                     ) : (
                                         Object.keys(data).map(key => data[key]?.length > 0 && (
-                                            <div key={key}><h3 className="row-title">{getRowTitle(key)}</h3><Row movies={data[key]} onMovieClick={handleMovieClick} /></div>
+                                            <div key={key}><h3 className="row-title">{getRowTitle(key)}</h3>
+                                                <Row movies={data[key]} onMovieClick={handleMovieClick} />
+                                            </div>
                                         ))
                                     )}
                                 </section>

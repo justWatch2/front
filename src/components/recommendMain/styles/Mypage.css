@@ -1,0 +1,290 @@
+.mypage-wrapper {
+    background-color: #141414;
+    color: white;
+    min-height: 100vh;
+    padding-top: 80px;
+    padding-bottom: 4rem;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+}
+
+/* --- 콘텐츠 너비 및 중앙 정렬을 위한 컨테이너 --- */
+.mypage-container {
+    width: 90%;
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+/* --- 1. 프로필 헤더 섹션 --- */
+.profile-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 3rem;
+    padding: 1rem;
+}
+
+.profile-details {
+    display: flex;
+    align-items: center;
+    gap: 1.5rem;
+}
+
+.profile-image {
+    width: 100px;
+    height: 100px;
+    border-radius: 8px;
+    object-fit: cover;
+    flex-shrink: 0;
+}
+
+.profile-info-text h1 {
+    font-size: 2.2rem;
+    font-weight: bold;
+    margin: 0 0 0.25rem 0;
+}
+
+.profile-info-text p {
+    font-size: 1.1rem;
+    color: #aaa;
+    margin: 0;
+}
+
+.profile-actions {
+    display: flex;
+    gap: 1rem;
+}
+
+.btn {
+    padding: 10px 20px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-weight: bold;
+    font-size: 1rem;
+    transition: background-color 0.2s;
+}
+
+.btn-edit {
+    background-color: #555;
+    color: white;
+}
+.btn-edit:hover {
+    background-color: #777;
+}
+
+.btn-delete {
+    background-color: transparent;
+    color: #aaa;
+    border: 1px solid #aaa;
+}
+.btn-delete:hover {
+    background-color: rgba(255, 255, 255, 0.1);
+    color: white;
+    border-color: white;
+}
+
+/* --- 2. 탭과 콘텐츠를 감싸는 섹션 --- */
+.content-section {
+    background-color: #1c1c1c;
+    border-radius: 12px;
+    padding: 2rem;
+}
+
+.tab-navigation {
+    display: flex;
+    border-bottom: 1px solid #333;
+    margin-bottom: 2rem;
+    overflow-x: auto;
+    white-space: nowrap;
+    padding-bottom: 10px;
+    -webkit-overflow-scrolling: touch;
+}
+
+.tab-navigation::-webkit-scrollbar {
+    height: 5px;
+}
+
+.tab-navigation::-webkit-scrollbar-thumb {
+    background-color: #555;
+    border-radius: 5px;
+}
+
+.tab-navigation::-webkit-scrollbar-track {
+    background-color: #1c1c1c;
+}
+
+.tab-button {
+    padding: 1rem 0;
+    margin-right: 2rem;
+    font-size: 1.2rem;
+    cursor: pointer;
+    border: none;
+    background: none;
+    color: #888;
+    font-weight: bold;
+    border-bottom: 3px solid transparent;
+    transition: color 0.3s, border-bottom-color 0.3s;
+}
+
+.tab-button:hover {
+    color: #fff;
+}
+
+.tab-button.active {
+    color: #fff;
+    border-bottom-color: #e50914;
+}
+
+/* --- 3. 탭 콘텐츠 표시 영역 --- */
+.tab-content-display {
+    min-height: 300px;
+}
+
+.content-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+    gap: 1.5rem;
+}
+
+.poster-item {
+    cursor: pointer;
+    overflow: hidden;
+    border-radius: 4px;
+    transition: transform 0.3s ease-in-out;
+    position: relative;
+}
+.poster-item:hover {
+    transform: scale(1.05);
+    box-shadow: 0 10px 20px rgba(0,0,0,0.5);
+}
+
+.poster-image {
+    width: 100%;
+    height: auto;
+    display: block;
+}
+
+.content-placeholder {
+    color: #888;
+    font-size: 1.2rem;
+    padding: 3rem 0;
+    text-align: center;
+}
+
+/* --- 프로필 수정 모달 --- */
+.modal-overlay {
+    position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(0, 0, 0, 0.8);
+    display: flex; justify-content: center; align-items: center; z-index: 1001;
+}
+.modal-content {
+    background: #1c1c1c; padding: 2.5rem; border-radius: 12px; width: 90%; max-width: 550px;
+    color: white; box-shadow: 0 5px 15px rgba(0,0,0,0.5);
+}
+.modal-title { font-size: 2rem; font-weight: bold; margin-bottom: 2rem; text-align: center; }
+.modal-profile-image-section { text-align: center; margin-bottom: 1.5rem; }
+.modal-profile-image-preview { width: 100px; height: 100px; border-radius: 50%; object-fit: cover; margin: 0 auto 1rem auto; display: block; border: 2px solid #555; }
+.modal-image-upload-btn { display: inline-block; padding: 8px 15px; background: #555; color: white; cursor: pointer; border-radius: 5px; font-weight: bold; transition: background-color 0.2s; }
+.modal-image-upload-btn:hover { background-color: #777; }
+.modal-input-group { margin-bottom: 1.5rem; }
+.modal-input-group label { display: block; margin-bottom: 0.5rem; color: #aaa; font-weight: bold; }
+.modal-input-group input { width: 100%; padding: 12px; background: #333; border: 1px solid #555; border-radius: 5px; color: white; font-size: 1rem; }
+.modal-input-group input:focus { outline: none; border-color: #e50914; }
+.modal-buttons { display: flex; justify-content: flex-end; gap: 10px; margin-top: 2rem; }
+.btn-primary { background-color: #e50914; color: white; }
+.btn-primary:hover { background-color: #f6121d; }
+.btn-secondary { background-color: #555; color: white; }
+.btn-secondary:hover { background-color: #777; }
+
+/* "더 보기" 버튼 */
+.btn-load-more {
+    display: block;
+    margin: 1rem auto;
+    padding: 10px 20px;
+    background-color: #e50914;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+}
+.btn-load-more:hover {
+    background-color: #f6121d;
+}
+.btn-load-more:disabled {
+    background-color: #555;
+    cursor: not-allowed;
+}
+
+/* 삭제 버튼 */
+.delete-btn {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background-color: rgba(255, 0, 0, 0.7);
+    color: white;
+    border: none;
+    border-radius: 4px;
+    padding: 5px 10px;
+    cursor: pointer;
+    opacity: 0.9;
+    z-index: 10;
+}
+
+.friends-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+    gap: 1.5rem;
+    margin-bottom: 1rem;
+}
+
+.friend-item {
+    position: relative;
+    text-align: center;
+    padding: 1rem;
+    background-color: #222;
+    border-radius: 8px;
+    transition: transform 0.3s ease-in-out;
+}
+
+.friend-item:hover {
+    transform: scale(1.05);
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.5);
+}
+
+.friend-image {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    object-fit: cover;
+    margin-bottom: 0.5rem;
+}
+
+.friend-name {
+    display: block;
+    font-size: 1rem;
+    color: #fff;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 100%;
+}
+
+.friend-delete-btn {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background-color: rgba(255, 0, 0, 0.7);
+    color: white;
+    border: none;
+    border-radius: 4px;
+    padding: 5px 10px;
+    cursor: pointer;
+    opacity: 0;
+    transition: opacity 0.3s;
+    z-index: 10;
+}
+
+.friend-item:hover .friend-delete-btn {
+    opacity: 0.9;
+}

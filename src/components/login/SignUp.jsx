@@ -30,7 +30,7 @@ function SignUp({onClose}) {
     };
 
     function checkId(values, setFieldValue) {
-        axios.get("/api/checkId?id=" + values.id).then((res) => {
+        axios.get("http://localhost:8080/api/checkId?id=" + values.id).then((res) => {
             if (res.data === "success") {
                 setFieldValue("flag", true);
                 alert("사용 가능한 아이디입니다.");
@@ -113,7 +113,7 @@ function SignUp({onClose}) {
                         formData.append("img", img);
 
                         axios
-                            .post("/api/signUp", formData)
+                            .post("http://localhost:8080/api/signUp", formData)
                             .then((res) => {
                                 alert(res.data);
                                 if (onClose) onClose();
