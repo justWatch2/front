@@ -31,10 +31,16 @@ function LoginDropdown({ onClose, onLoginSuccess, loginButtonRect }) {
             console.warn("JSON 파싱 실패 (본문 없음일 수 있음):", e);
           }
           if (res.ok && token) {
-            localStorage.setItem("jwt", token);
-            alert("로그인 성공! JWT 저장됨\nToken: " + token);
-            // await tryInviteFriend();
-            window.location.href = "/";
+                    localStorage.setItem("jwt", event.data.token);
+        //  로그인 상태 반영
+        if (onLoginSuccess) onLoginSuccess();
+
+        //  모달 닫기
+        if (onClose) onClose();
+            // localStorage.setItem("jwt", token);
+            // alert("로그인 성공! JWT 저장됨\nToken: " + token);
+            // // await tryInviteFriend();
+            // window.location.href = "/";
           } else {
             if (res.status === 401) {
               let errorBody = null;
