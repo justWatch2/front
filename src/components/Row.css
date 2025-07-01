@@ -8,6 +8,7 @@ h2 {
 .slider {
   position: relative;
 }
+
 .slider__arrow-left {
   background-clip: content-box;
   padding: 20px 0;

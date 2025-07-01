@@ -1,6 +1,8 @@
 import React, { useEffect } from "react";
-import axios from 'axios';
 import { autoRefreshCheck } from "../../tokenUtils/TokenUtils";
+
+
+
 
 const KakaoInviteButton = () => {
     useEffect(() => {
@@ -34,7 +36,7 @@ const KakaoInviteButton = () => {
             content: {
                 title: "친구추가 요청입니다!! 이상한거 아닙니다 스펨아니에요 ",
                 description: "초대자가 친구추가를 원합니다 로그인해주세요!! ",
-                imageUrl: "https://your-site.com/logo.png",
+                imageUrl: "https://gyu0918.github.io/shareImage/ProfileLogo.png",
                 link: {
                     mobileWebUrl: inviteUrl,
                     webUrl: inviteUrl,

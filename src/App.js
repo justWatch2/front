@@ -1,15 +1,21 @@
 import React, { useState, useEffect } from "react";
+// import 'bootstrap/dist/css/bootstrap.min.css';
 import "./App.css";
-import Nav from "./components/recommendFriend/Nav";
+import Nav from "./components/Nav";
+import Banner from "./components/Banner";
+import Row from "./components/Row";
+import requests from "./api/requests";
+import Footer from "./components/Footer";
 import FriendRecommend from "./components/recommendFriend/FriendRecommend";
-import {Route, BrowserRouter as Router, Routes} from "react-router-dom";
-import Main from "./components/recommendFriend/Main";
+import {Route, BrowserRouter as Router, Routes, useNavigate} from "react-router-dom";
+import Main from "./components/Main";
 import Home  from "./components/search/Home.jsx";
 import Detail from "./components/search/Detail";
 import Posts from "./components/board/Posts";
 import Write from "./components/board/Write";
 import Post from "./components/board/Post";
 import RecommendReal from "./recommendReal.jsx";
+import MovieModal from "./components/recommendMain/components/MovieModal";
 
 
 
@@ -51,21 +57,21 @@ function App() {
             onLogout={handleLogout}
             onProfileClick={handleProfileClick}
             showProfileDropdown={showProfileDropdown}
+            setIsLoggedIn2={setIsLoggedIn2}
         />
         <Routes>
-          <Route path="/**" element={<Main/>}></Route>
           <Route path="/" element={<Main/>}></Route>
 
           <Route path="/recommend/main" element={<RecommendReal/>}></Route>
           <Route path="/recommend/friend" element={<FriendRecommend />}></Route>
 
-          <Route path="/post" element={<Posts/>}></Route>
-          <Route path="/write/:id" element={<Write />} />
+          <Route path="/posts/:cat" element={<Posts/>}></Route>
+          <Route path="/write/:no" element={<Write />} />
           <Route path="/post/:postNo" element={<Post />} />
 
-          <Route path="/post/detaile/:no" element={""}></Route>
+          {/*<Route path="//detaile/:no" element={<Detail/>}/>*/}
 
-          <Route path="/search" element={<Home/>}></Route>
+         <Route path="/search" element={<Home/>}></Route>
           <Route path="/detail/:category/:id" element={<Detail/>}></Route>
           <Route path="/mypage" element={""}></Route>
 
@@ -79,6 +85,7 @@ function App() {
       {/*        onDetails={goToDetails}*/}
       {/*    />*/}
       {/*)}*/}
+      <Footer />
     </div>
   );
 }
