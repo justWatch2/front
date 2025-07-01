@@ -1,8 +1,8 @@
 import React from "react";
 import "./App.css";
 import { Route, BrowserRouter as Router, Routes } from "react-router-dom";
-import Nav from "./components/recommendFriend/Nav";
-import Main from "./components/recommendFriend/Main";
+import Nav from "./components/Nav";
+import Main from "./components/Main";
 import Home from "./components/search/Home.jsx";
 import Detail from "./components/search/Detail";
 import Posts from "./components/board/Posts";

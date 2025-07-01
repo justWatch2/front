@@ -2,7 +2,7 @@ import React, { useState, useEffect, useContext, useCallback } from 'react';
 import { RecommendationContext } from '../RecommendationContext';
 import { fetchMyProfile, updateMyProfile, getFriends, deleteFriend } from '../api/UserApi';
 import LoadingPage from "./LoadingPage";
-import WishlistTab from './WishlistTab';
+// import WishlistTab from '../';
 import '../styles/Mypage.css';
 
 // --- '프로필 수정' 모달 컴포넌트 ---
@@ -298,10 +298,10 @@ export default function MyPage() {
 
                         <div className="tab-content-display">
                             {activeTab === 'friends' && <FriendsTab userId={userId} />}
-                            {activeTab === 'liked_movies' && <WishlistTab type="liked_movies" title="찜한 영화" userId={userId} />}
-                            {activeTab === 'liked_tvs' && <WishlistTab type="liked_tvs" title="찜한 TV" userId={userId} />}
-                            {activeTab === 'watched_movies' && <WishlistTab type="watched_movies" title="시청 영화" userId={userId} />}
-                            {activeTab === 'watched_tvs' && <WishlistTab type="watched_tvs" title="시청 TV" userId={userId} />}
+                            {/*{activeTab === 'liked_movies' && <WishlistTab type="liked_movies" title="찜한 영화" userId={userId} />}*/}
+                            {/*{activeTab === 'liked_tvs' && <WishlistTab type="liked_tvs" title="찜한 TV" userId={userId} />}*/}
+                            {/*{activeTab === 'watched_movies' && <WishlistTab type="watched_movies" title="시청 영화" userId={userId} />}*/}
+                            {/*{activeTab === 'watched_tvs' && <WishlistTab type="watched_tvs" title="시청 TV" userId={userId} />}*/}
                         </div>
                     </section>
                 </div>
