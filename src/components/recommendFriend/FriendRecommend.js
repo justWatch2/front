@@ -6,6 +6,7 @@ import {jwtDecode} from 'jwt-decode';  // 설치 필요: npm i jwt-decode
 import './FriendRecommend.css';
 import { autoRefreshCheck } from "../../tokenUtils/TokenUtils";
 import  {useNavigate} from 'react-router';
+import ProfileLogo from './img/ProfileLogo.png';
 
 
 
@@ -18,7 +19,7 @@ const FriendListItem = ({ name, numWish, numViewedMovie, icon, isSelected, onSel
                 checked={isSelected}
                 onChange={() => onSelect(name)}
             />
-            <img src={icon} alt={name} />
+            <img src={icon==null? ProfileLogo: icon} alt={name} style={{width:'50px', height:'50px'}} />
             <span className="friend-name">{name}</span>
             <div className="friend-stats">
                 <span>{numWish}</span>
@@ -258,7 +259,7 @@ const FriendRecommend = () => {
                         const friend = friendList.find(f => f.name === name);
                         return friend ? (
                             <div key={idx} className="profile">
-                                <img src={friend.icon} alt={name} />
+                                <img src={friend.icon==null? ProfileLogo:friend.icon} alt={name} />
                                 <span className="profile-name">{name}</span>
                             </div>
                         ) : null;
