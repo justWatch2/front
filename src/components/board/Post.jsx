@@ -17,6 +17,8 @@ import {
 import ThumbUpIcon from "@mui/icons-material/ThumbUp";
 import {checkToken} from "../../tokenUtils/TokenUtil4Post";
 
+// key2 브랜치
+
 function Post() {
     const navigate = useNavigate();
     const {postNo} = useParams();
