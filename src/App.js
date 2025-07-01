@@ -16,6 +16,7 @@ import Write from "./components/board/Write";
 import Post from "./components/board/Post";
 import RecommendReal from "./recommendReal.jsx";
 import MovieModal from "./components/recommendMain/components/MovieModal";
+import NotFoundPage from "./components/NotFoundPage.js"
 
 
 
@@ -60,6 +61,7 @@ function App() {
             setIsLoggedIn2={setIsLoggedIn2}
         />
         <Routes>
+          <Route path="*" element={<NotFoundPage />} />
           <Route path="/" element={<Main/>}></Route>
 
           <Route path="/recommend/main" element={<RecommendReal/>}></Route>
