@@ -5,7 +5,7 @@ import "./Row.css";
 export default function Row({ isLargeRow, title, id, fetchUrl}){
     const [movies, setMovies] = useState([]);
     const [modalOpen, setModalOpen] = useState(false);
-     const [movieSelected, setMovieSelected] = useState({});
+    const [movieSelected, setMovieSelected] = useState({});
 
     useEffect(() => {
         fetchMovieData();
@@ -19,6 +19,7 @@ export default function Row({ isLargeRow, title, id, fetchUrl}){
     const handleClick = (movie) => {
     setModalOpen(true);
     setMovieSelected(movie);
+    console.log(movie);
   };
     
     
