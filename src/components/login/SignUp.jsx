@@ -73,6 +73,11 @@ function SignUp({onClose}) {
         });
     }
 
+    //
+    // function handleIdFlag(setFieldValue) {
+    //     setFieldValue("idFlag", false);
+    // }
+
     return (
         <ThemeProvider theme={darkTheme}>
             <CssBaseline/>
@@ -118,7 +123,7 @@ function SignUp({onClose}) {
                         if (values.pass !== values.passR) {
                             errors.passR = "비밀번호가 일치하지 않습니다.";
                         }
-                        if (values.nameFlag === "") {
+                        if (!values.nameFlag) {
                             errors.name = "닉네임 중복 확인이 필요합니다.";
                         }
                         return errors;
@@ -155,6 +160,7 @@ function SignUp({onClose}) {
                                                 label="아이디"
                                                 variant="outlined"
                                                 fullWidth
+                                                onFocus={() => setFieldValue("idFlag", false)}
                                                 error={touched.id && Boolean(errors.id)}
                                                 helperText={
                                                     touched.id && errors.id ? (
@@ -214,37 +220,40 @@ function SignUp({onClose}) {
                                             }/>
                                     )}
                                 </Field>
-                                <Field name="name">
-                                    {({field}) => (
-                                        <TextField
-                                            {...field}
-                                            label="닉네임"
-                                            variant="outlined"
-                                            fullWidth
-                                            error={touched.name && Boolean(errors.name)}
-                                            helperText={
-                                                touched.name && errors.name ? (
-                                                    <span style={{fontSize: "0.9rem"}}>
+                                <Box display="flex" gap={1} alignItems="center">
+                                    <Field name="name">
+                                        {({field}) => (
+                                            <TextField
+                                                {...field}
+                                                label="닉네임"
+                                                variant="outlined"
+                                                fullWidth
+                                                onFocus={() => setFieldValue("nameFlag", false)}
+                                                error={touched.name && Boolean(errors.name)}
+                                                helperText={
+                                                    touched.name && errors.name ? (
+                                                        <span style={{fontSize: "0.9rem"}}>
                                                         {errors.name}
                                                     </span>
-                                                ) : null
-                                            }/>
-                                    )}
-                                </Field>
-                                <Button
-                                    variant="contained"
-                                    onClick={() => checkName(values, setFieldValue)}
-                                    sx={{
-                                        backgroundColor: "primary.main",
-                                        color: "#fff",
-                                        whiteSpace: "nowrap",
-                                        "&:hover": {
-                                            backgroundColor: "#8d1a24", // 약간 더 어두운 빨강
-                                        },
-                                    }}
-                                >
-                                    중복확인
-                                </Button>
+                                                    ) : null
+                                                }/>
+                                        )}
+                                    </Field>
+                                    <Button
+                                        variant="contained"
+                                        onClick={() => checkName(values, setFieldValue)}
+                                        sx={{
+                                            backgroundColor: "primary.main",
+                                            color: "#fff",
+                                            whiteSpace: "nowrap",
+                                            "&:hover": {
+                                                backgroundColor: "#8d1a24", // 약간 더 어두운 빨강
+                                            },
+                                        }}
+                                    >
+                                        중복확인
+                                    </Button>
+                                </Box>
 
                                 {/* 이미지 업로드 */}
                                 <Box>
@@ -266,7 +275,7 @@ function SignUp({onClose}) {
                                             />
                                         </Box>
                                     )}
-                                    <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
+                                    <Box sx={{display: "flex", alignItems: "center", gap: 1}}>
                                         <input
                                             type="file"
                                             id="file-upload"
@@ -279,7 +288,7 @@ function SignUp({onClose}) {
                                                     setPreview(null);
                                                 }
                                             }}
-                                            style={{ display: "none" }}
+                                            style={{display: "none"}}
                                         />
                                         <Button
                                             variant="outlined"

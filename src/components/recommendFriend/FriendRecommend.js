@@ -43,6 +43,7 @@ const FriendRecommend = () => {
     const [error, setError] = useState(null);
     const [isFriendListLoaded, setIsFriendListLoaded] = useState(false);
 
+
     const TMDB_API_KEY = '3d3c7315778f5fbf4c858608cd6ce78f';
     const TMDB_IMAGE_BASE_URL = "https://image.tmdb.org/t/p/w500";
 
@@ -58,6 +59,9 @@ const FriendRecommend = () => {
             } catch (e) {
                 console.error('Invalid token format', e);
             }
+        }else{
+            alert("로그인 해주세요!");
+            navigate("/");
         }
     }, []);
 

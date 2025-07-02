@@ -24,7 +24,7 @@ function App() {
             <Route path="/recommend/main" element={<RecommendReal />} />
             <Route path="/recommend/friend" element={<FriendRecommend />} />
             <Route path="/posts/:cat" element={<Posts />} />
-            <Route path="/write/:id" element={<Write />} />
+            <Route path="/write/:no" element={<Write />} />
             <Route path="/post/:postNo" element={<Post />} />
             <Route path="/search" element={<Home />} />
             <Route path="/detail/:category/:id" element={<Detail />} />

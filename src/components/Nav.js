@@ -26,7 +26,7 @@ export default function Nav() {
 
     const storedImgUrl = localStorage.getItem("img");
 
-    const profileImageSrc = storedImgUrl ? "http://localhost:8080" + storedImgUrl : profileLogo;
+    const profileImageSrc = storedImgUrl ? storedImgUrl : profileLogo;
 
     return (
         <nav className={`nav2 ${show && "nav2__black"}`}>

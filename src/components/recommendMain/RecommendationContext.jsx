@@ -39,12 +39,12 @@ export const RecommendationProvider = ({ children }) => {
     }, [isLoggedIn]);
 
     // 3. 로그인 성공 시 호출될 함수
-    const handleLogin = useCallback(async (token, loggedInUserId) => {
+    const handleLogin = useCallback(async (token) => {
         localStorage.setItem('jwt', token);
         const response = await  findmemberId();
         console.log(response);
         console.log(response.data);
-        if (response && loggedInUserId) {
+        if (response) {
             setIsLoggedIn(true);
         }
         localStorage.setItem('userId', response.memberName);
