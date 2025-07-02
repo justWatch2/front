@@ -244,11 +244,11 @@ function Post() {
                         setSubmitting(true);
                         const formData = new FormData();
                         formData.append("postNo", values.postNo);
-                        formData.append("name", values.id);
+                        formData.append("id", values.id);
                         formData.append("contents", values.contents);
                         checkToken({
                             method: 'post',
-                            url: 'api/saveReply',
+                            url: '/api/saveReply',
                             data: formData
                         }).then((res) => {
                             alert(res.data);
