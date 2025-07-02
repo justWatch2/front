@@ -1,14 +1,9 @@
-
-
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import {jwtDecode} from 'jwt-decode';  // 설치 필요: npm i jwt-decode
+import { jwtDecode } from 'jwt-decode'; // 설치 필요: npm i jwt-decode
 import './FriendRecommend.css';
 import { autoRefreshCheck } from "../../tokenUtils/TokenUtils";
-import  {useNavigate} from 'react-router';
-import ProfileLogo from './img/ProfileLogo.png';
-
-
+import { useNavigate } from 'react-router';
 
 // 친구 목록 항목 컴포넌트
 const FriendListItem = ({ name, numWish, numViewedMovie, icon, isSelected, onSelect }) => {
@@ -19,7 +14,7 @@ const FriendListItem = ({ name, numWish, numViewedMovie, icon, isSelected, onSel
                 checked={isSelected}
                 onChange={() => onSelect(name)}
             />
-            <img src={icon==null? ProfileLogo: icon} alt={name} style={{width:'50px', height:'50px'}} />
+            <img src={icon} alt={name} />
             <span className="friend-name">{name}</span>
             <div className="friend-stats">
                 <span>{numWish}</span>
@@ -47,14 +42,11 @@ const FriendRecommend = () => {
     const TMDB_API_KEY = '3d3c7315778f5fbf4c858608cd6ce78f';
     const TMDB_IMAGE_BASE_URL = "https://image.tmdb.org/t/p/w500";
 
-    // 1. 토큰에서 내 멤버 아이디 추출
     useEffect(() => {
-
         const token = localStorage.getItem('jwt');
         if (token) {
             try {
                 const decoded = jwtDecode(token);
-                // 토큰 구조에 맞게 키 조정
                 setMyMemberId(decoded.memberId || decoded.id || decoded.sub);
             } catch (e) {
                 console.error('Invalid token format', e);
@@ -65,7 +57,6 @@ const FriendRecommend = () => {
         }
     }, []);
 
-    // 2. 친구 목록 불러오기 (카테고리 변경 시)
     useEffect(() => {
         const fetchFriendsList = async () => {
             setIsLoading(true);
@@ -78,13 +69,15 @@ const FriendRecommend = () => {
                     url: url,
                     params: { category: selectedCategory },
                 });
-                setFriendList(response.data);
-                setIsFriendListLoaded(true);
+
+                const data = response?.data || []; // 🔧 null 응답 처리 → 빈 배열
+                setFriendList(data);
+                setIsFriendListLoaded(true); // 🔧 null이어도 로딩 완료
             } catch (err) {
                 console.error(`Error fetching ${selectedCategory} friendsList:`, err);
                 setError('친구 목록을 가져오지 못했습니다.');
                 setFriendList([]);
-                setIsFriendListLoaded(false);
+                setIsFriendListLoaded(true); // 🔧 실패해도 추천은 시도 가능해야 하므로 true
             } finally {
                 setIsLoading(false);
             }
@@ -92,7 +85,6 @@ const FriendRecommend = () => {
         fetchFriendsList();
     }, [selectedCategory]);
 
-    // 3. 추천 요청: 친구 목록 로드 완료, 내 ID 있고, selectedFriends/옵션 변경 시 실행
     useEffect(() => {
         if (!isFriendListLoaded || !myMemberId) return;
 
@@ -167,7 +159,6 @@ const FriendRecommend = () => {
         return () => clearTimeout(timer);
     }, [isFriendListLoaded, myMemberId, selectedFriends, recommendOption, selectedCategory]);
 
-    // 친구 선택/해제 처리
     const handleFriendSelect = (friendName) => {
         setSelectedFriends((prevSelected) => {
             if (prevSelected.includes(friendName)) {
@@ -180,7 +171,6 @@ const FriendRecommend = () => {
         setAllSelected(selectedFriends.length === friendList.length - 1);
     };
 
-    // 카테고리 변경 처리
     const handleCategoryChange = (category) => {
         setSelectedCategory(category);
         setSelectedFriends([]);
@@ -188,24 +178,19 @@ const FriendRecommend = () => {
         setRecommendedMovies([]);
     };
 
-    // 추천 옵션 변경 처리
     const handleRecommendOption = (option) => {
         setRecommendOption(recommendOption === option ? null : option);
     };
 
-    // 친구 검색 필터링
     const filteredFriends = friendList.filter(friend =>
         friend.name.toLowerCase().includes(searchTerm.toLowerCase())
     );
 
-    // 선택된 친구 프로필 (최대 6명)
     const displayedProfiles = selectedFriends.slice(0, 6);
 
-    // 모달 열기/닫기
-    const handleMovieClick = (movie) => {console.log(movie); setSelectedMovie(movie)};
+    const handleMovieClick = (movie) => { setSelectedMovie(movie); };
     const closeModal = () => setSelectedMovie(null);
 
-    // 모두 해제
     const handleAllSelect = () => {
         setAllSelected(false);
         setSelectedFriends([]);
@@ -263,7 +248,7 @@ const FriendRecommend = () => {
                         const friend = friendList.find(f => f.name === name);
                         return friend ? (
                             <div key={idx} className="profile">
-                                <img src={friend.icon==null? ProfileLogo:friend.icon} alt={name} />
+                                <img src={friend.icon} alt={name} />
                                 <span className="profile-name">{name}</span>
                             </div>
                         ) : null;
@@ -319,7 +304,16 @@ const FriendRecommend = () => {
                                 />
                             )}
                             <p className="modal-description">{selectedMovie.description}</p>
-                            <button className="modal-details-btn" onClick={()=> navigate(`/detail/${selectedCategory  === "영화" ? "movie/" + selectedMovie.movieId : "tv/" + selectedMovie.tvShowId} `)}>상세페이지</button>
+                            <button
+                                className="modal-details-btn"
+                                onClick={() =>
+                                    navigate(`/detail/${selectedCategory === "영화"
+                                        ? "movie/" + selectedMovie.movieId
+                                        : "tv/" + selectedMovie.tvShowId}`)
+                                }
+                            >
+                                상세페이지
+                            </button>
                         </div>
                     </div>
                 )}
@@ -347,6 +341,10 @@ const FriendRecommend = () => {
                     <span>모두 해제</span>
                 </div>
                 <div className="friend-list">
+                    {/* 🔧 친구 없을 때 문구 */}
+                    {friendList.length === 0 && !isLoading && (
+                        <div className="empty-friend-message">친구를 추가하세요.</div>
+                    )}
                     {filteredFriends.map((friend, idx) => (
                         <FriendListItem
                             key={idx}
