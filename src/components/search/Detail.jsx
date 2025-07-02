@@ -74,7 +74,7 @@ function Detail() {
 
     useEffect(() => {
         if (contents)
-            axios.get(`/api/non-member/dependency/${contents.title}/${contents.original_title}`)
+            axios.get(`/api/non-member/dependency/${contents.title}/${/[ㄱ-ㅎㅏ-ㅣ가-힣]/.test(contents.original_title)}`)
                 .then(res => setDependency(res.data));
     }, [contents]);
 
