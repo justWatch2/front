@@ -18,6 +18,14 @@ function Detail() {
     const [dependency, setDependency] = useState([]);
     const token = localStorage.getItem("jwt");
 
+    useEffect(
+        ()=>{
+            window.scrollTo(0,0);
+
+        },[]
+    );
+
+
     useEffect(() => {
         const load= async ()=>{
             const urlBase = category === "movie" ? "movie" : "tv";

@@ -1,11 +1,14 @@
 import axios from '../api/axios';
 import React, { useEffect , useState } from 'react'
 import "./Row.css";
+import {useNavigate} from "react-router-dom";
 
 export default function Row({ isLargeRow, title, id, fetchUrl}){
     const [movies, setMovies] = useState([]);
     const [modalOpen, setModalOpen] = useState(false);
     const [movieSelected, setMovieSelected] = useState({});
+
+    const navigate = useNavigate();
 
     useEffect(() => {
         fetchMovieData();
@@ -45,10 +48,8 @@ export default function Row({ isLargeRow, title, id, fetchUrl}){
                     className=""
 
                     onClick={(event) => {
-
-                        // if (onMovieClick) {
-                        //     onMovieClick(item, event);
-                        // }
+                        window.scrollTo(0,0);
+                        navigate(`detail/${movie.release_date ? "movie":"tv"}/${movie.id}`);
                     }}
                 >
 
