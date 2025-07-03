@@ -6,6 +6,7 @@ import ProfileDropdown from "./recommendFriend/ProfileDropdown";
 import { Link, useNavigate } from "react-router-dom";
 import logo from "./search/assets/content.png";
 import profileLogo from "./recommendFriend/img/ProfileLogo.png";
+import InviteModal from "./recommendFriend/InviteModal";
 
 export default function Nav() {
     // 1. Context에서 모든 로그인/유저 정보를 가져옵니다.
@@ -37,6 +38,9 @@ export default function Nav() {
                 <Link style={{ textDecoration: "none" }} to={"/recommend/friend"}><h2 className="nav__recommend">친구 추천</h2></Link>
                 <Link style={{ textDecoration: "none" }} to={"/posts/common"}><h2 className="nav__recommend">게시판</h2></Link>
             </div>
+
+
+
             <div className="nav__right">
                 {/* 3. Context의 isLoggedIn 상태에 따라 UI를 분기합니다. */}
                 {!isLoggedIn ? (
