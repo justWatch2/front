@@ -16,6 +16,10 @@ const InviteAcceptModal = ({ invites, onAccept, onClose }) => {
             if (response.status === 200) {
                 alert("친구 추가 성공!");
                 localStorage.removeItem(key);
+
+                //성공한후에 서버에 레디스 지우라고 안한이유
+                // 어차피 TTl 1시간으로 되어 있고
+                // 다시 링크 타고 홈페이지 들어와도 이미 친구가 되어 있어서 이미친구라고 뜬다
                 onAccept(key);
             } else {
                 alert("친구 추가 실패");
