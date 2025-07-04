@@ -314,7 +314,7 @@ function Detail() {
                         <h2>연관 게시글</h2>
                         {dependency.map((item) => (
                             <div className={styles.relatedPost} key={item.no}>
-                                <Link to={`/gullview/${item.no}`} style={{ textDecoration: 'none', color: 'inherit' }}>
+                                <Link to={`/post/${item.no}`} style={{ textDecoration: 'none', color: 'inherit' }}>
                                     <div className={styles.card}>
                                         <div className={styles.cardBody}>
                                             <h5 className={styles.relatedPostTitle}>{item.title}</h5>
