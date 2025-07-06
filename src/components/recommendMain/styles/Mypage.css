@@ -252,8 +252,8 @@
 }
 
 .friend-image {
-    width: 50px;
-    height: 50px;
+    width: 100px;
+    height: 100px;
     border-radius: 50%;
     object-fit: cover;
     margin-bottom: 0.5rem;
@@ -287,4 +287,183 @@
 
 .friend-item:hover .friend-delete-btn {
     opacity: 0.9;
+}
+
+/* Mypage.css 파일 하단에 추가 */
+
+.poster-item {
+    position: relative; /* 자식 요소의 absolute 위치 기준 */
+    display: flex; /* 내부 요소 정렬을 위해 추가 */
+    flex-direction: column;
+}
+
+.poster-image {
+    width: 100%;
+    height: auto;
+}
+
+/* 포스터 위에 올라갈 정보 컨테이너 (모방) */
+.poster-item-info {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    padding: 20px 10px 10px 10px;
+    background: linear-gradient(to top, rgba(0, 0, 0, 0.9) 20%, transparent 100%);
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    color: white;
+}
+
+.poster-item:hover .poster-item-info {
+    opacity: 1;
+}
+
+.poster-item-info h3 {
+    font-size: 1rem;
+    margin: 0 0 5px 0;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.poster-item-rating {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}
+
+.poster-item-rating .icon-star {
+    color: #ffd700;
+    font-size: 14px;
+}
+
+.poster-item-rating .rating-score {
+    font-size: 12px;
+    font-weight: bold;
+}
+
+/* 삭제 버튼이 호버 시 항상 보이도록 */
+.poster-item:hover .delete-btn {
+    opacity: 0.9;
+}
+/* --- 기존 Mypage.css 코드는 그대로 두고, 아래 내용으로 교체하거나 추가해주세요 --- */
+
+/* --- 3. 탭 콘텐츠 표시 영역 --- */
+.tab-content-display {
+    min-height: 300px;
+}
+
+/* --- 수정: 그리드 아이템 크기 및 간격 조정 --- */
+.content-grid {
+    display: grid;
+    /* minmax의 최솟값을 150px로 줄여서 아이템을 더 작게 만듭니다. */
+    grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+    gap: 1.5rem;
+}
+
+/* --- 수정: 콘텐츠 아이템 전체 컨테이너 --- */
+.content-item-container {
+    display: flex;
+    flex-direction: column;
+}
+
+/* --- 수정: 포스터 이미지 래퍼 --- */
+.poster-wrapper {
+    position: relative;
+    cursor: pointer;
+    overflow: hidden;
+    border-radius: 4px;
+    transition: transform 0.2s ease-in-out;
+}
+.poster-wrapper:hover {
+    transform: scale(1.05);
+    box-shadow: 0 8px 16px rgba(0,0,0,0.4);
+}
+
+.poster-image {
+    width: 100%;
+    height: auto;
+    display: block;
+}
+
+/* --- 수정: 포스터 하단 정보 래퍼 --- */
+.info-wrapper {
+    padding: 10px 4px; /* 상하좌우 여백 */
+}
+
+.info-title {
+    font-size: 0.9rem;
+    font-weight: 500;
+    color: #fff;
+    margin: 0 0 5px 0;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.info-rating {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}
+.info-rating .icon-star { color: #f5c518; font-size: 14px; }
+.info-rating .rating-score { font-size: 13px; color: #ccc; }
+
+
+/* --- 수정: 기존 .delete-btn 스타일은 그대로 사용 --- */
+.delete-btn {
+    position: absolute;
+    top: 8px;
+    right: 8px;
+    background-color: rgba(0, 0, 0, 0.7);
+    color: white;
+    border: 1px solid rgba(255, 255, 255, 0.7);
+    border-radius: 50%;
+    width: 28px;
+    height: 28px;
+    font-size: 14px;
+    font-weight: bold;
+    line-height: 26px;
+    text-align: center;
+    cursor: pointer;
+    z-index: 10;
+    opacity: 0;
+    transition: opacity 0.2s;
+}
+.poster-wrapper:hover .delete-btn {
+    opacity: 1;
+}
+
+
+/* --- 수정: 기존 .btn-load-more 대신 새로운 스타일 적용 --- */
+.btn-load-more-plus {
+    display: inline-block;
+    padding: 12px 30px; /* 크기 키움 */
+    background-color: #333;
+    color: #fff;
+    border: 1px solid #555;
+    border-radius: 50px; /* 둥근 모양 */
+    cursor: pointer;
+    font-size: 1.1rem; /* 폰트 크기 키움 */
+    font-weight: bold;
+    transition: background-color 0.2s, transform 0.2s;
+}
+.btn-load-more-plus:hover {
+    background-color: #444;
+    transform: scale(1.03);
+}
+.btn-load-more-plus:disabled {
+    background-color: #222;
+    color: #555;
+    cursor: not-allowed;
+    transform: scale(1);
+}
+
+/* --- 기존 .content-placeholder 등 나머지 스타일은 그대로 유지 --- */
+.content-placeholder {
+    color: #888;
+    font-size: 1.2rem;
+    padding: 3rem 0;
+    text-align: center;
 }

@@ -47,7 +47,7 @@ function Write() {
         } else {
             checkToken({
                 method: 'get',
-                url: '/api/non-member/getMemberId'
+                url: 'http://localhost:8080/api/non-member/getMemberId'
             }).then(res => {
                 const newPost = {
                     title: "",

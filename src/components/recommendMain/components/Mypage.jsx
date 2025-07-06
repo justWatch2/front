@@ -1,9 +1,11 @@
 import React, { useState, useEffect, useContext, useCallback } from 'react';
-import { RecommendationContext } from '../RecommendationContext';
-import { fetchMyProfile, updateMyProfile, getFriends, deleteFriend } from '../api/UserApi';
+import { RecommendationContext } from '../RecommendationContext'; // 실제 경로에 맞게 수정해주세요.
+import {fetchMyProfile, updateMyProfile, getFriends, deleteFriend, getContents, deleteContent} from '../api/UserApi';
 import LoadingPage from "./LoadingPage";
-// import WishlistTab from '../';
 import '../styles/Mypage.css';
+import {jwtDecode} from "jwt-decode";
+import ProfileLogo from "../../recommendFriend/img/ProfileLogo.png";
+import ContentTab  from "./ContentTab";
 
 // --- '프로필 수정' 모달 컴포넌트 ---
 const ProfileEditModal = ({ user, displayImageUrl, onClose, onSave }) => {
@@ -14,6 +16,9 @@ const ProfileEditModal = ({ user, displayImageUrl, onClose, onSave }) => {
     const [confirmPassword, setConfirmPassword] = useState('');
     const [imageFile, setImageFile] = useState(null);
     const [imagePreview, setImagePreview] = useState(displayImageUrl);
+    const decode = jwtDecode(localStorage.getItem('jwt'))? jwtDecode(localStorage.getItem('jwt')) : null;
+
+    const isSocialLogin = decode && ['google', 'kakao', 'facebook'].includes(decode.provider);
 
     const handleImageChange = (e) => {
         const file = e.target.files[0];
@@ -26,15 +31,21 @@ const ProfileEditModal = ({ user, displayImageUrl, onClose, onSave }) => {
     };
 
     const handleSave = () => {
-        if (password && password !== confirmPassword) {
-            alert('비밀번호가 일치하지 않습니다.');
-            return;
+        if (isSocialLogin) {
+            // 소셜 로그인이면 비밀번호 검증 없이 닉네임과 이미지만 저장
+            onSave({ memberId, memberName, imageFile });
+        } else {
+            // 일반 로그인이면 기존 비밀번호 검증
+            if (password && password !== confirmPassword) {
+                alert('새 비밀번호가 일치하지 않습니다.');
+                return;
+            }
+            if (!currentPassword) {
+                alert('프로필 변경을 위해 기존 비밀번호를 입력해주세요.');
+                return;
+            }
+            onSave({ memberId, memberName, currentPassword, password, imageFile });
         }
-        if (!currentPassword) {
-            alert('기존 비밀번호를 입력해주세요.');
-            return;
-        }
-        onSave({ memberId, memberName, currentPassword, password, imageFile });
     };
 
     return (
@@ -58,27 +69,30 @@ const ProfileEditModal = ({ user, displayImageUrl, onClose, onSave }) => {
                     <label>기존 비밀번호</label>
                     <input
                         type="password"
-                        placeholder="기존 비밀번호 입력"
+                        placeholder={isSocialLogin ? "소셜 로그인은 비밀번호 변경 불가" : "기존 비밀번호 입력"}
                         value={currentPassword}
                         onChange={e => setCurrentPassword(e.target.value)}
+                        disabled={isSocialLogin}
                     />
                 </div>
                 <div className="modal-input-group">
                     <label>새 비밀번호</label>
                     <input
                         type="password"
-                        placeholder="변경할 경우에만 입력"
+                        placeholder={isSocialLogin ? "소셜 로그인은 비밀번호 변경 불가" : "변경할 경우에만 입력"}
                         value={password}
                         onChange={e => setPassword(e.target.value)}
+                        disabled={isSocialLogin}
                     />
                 </div>
                 <div className="modal-input-group">
                     <label>새 비밀번호 확인</label>
                     <input
                         type="password"
-                        placeholder="비밀번호 확인"
+                        placeholder={isSocialLogin ? "소셜 로그인은 비밀번호 변경 불가" : "비밀번호 확인"}
                         value={confirmPassword}
                         onChange={e => setConfirmPassword(e.target.value)}
+                        disabled={isSocialLogin}
                     />
                 </div>
                 <div className="modal-buttons">
@@ -90,18 +104,20 @@ const ProfileEditModal = ({ user, displayImageUrl, onClose, onSave }) => {
     );
 };
 
-// --- FriendsTab 컴포넌트 (인라인 정의, 친구 목록 및 삭제 기능 포함) ---
+// --- FriendsTab 컴포넌트 ---
 const FriendsTab = ({ userId }) => {
     const [friends, setFriends] = useState([]);
     const [isLoading, setIsLoading] = useState(false);
     const [showDelete, setShowDelete] = useState({});
 
+
     const loadFriends = useCallback(async () => {
-        if (!userId || isLoading) return;
+        if (isLoading) return;
         setIsLoading(true);
         try {
             const response = await getFriends();
             if(response.length === 0) {
+                console.log(response)
                 setFriends(response);
                 alert("친구가 없습니다.")
             }else{
@@ -156,7 +172,7 @@ const FriendsTab = ({ userId }) => {
                         onMouseLeave={() => handleMouseLeave(friend.memberId)}
                     >
                         <img
-                            src={"http://localhost:8080"+friend.imgUrl || 'https://placehold.co/50x50/e50914/ffffff?text=F'}
+                            src={friend.imgUrl ? `http://localhost:8080${friend.imgUrl}` : ProfileLogo}
                             alt={friend.memberId}
                             className="friend-image"
                         />
@@ -179,11 +195,11 @@ const FriendsTab = ({ userId }) => {
 
 // --- 마이페이지 메인 컴포넌트 ---
 export default function MyPage() {
-    const { userId } = useContext(RecommendationContext);
+    const { userId, updateUserInfo } = useContext(RecommendationContext);
     const [profile, setProfile] = useState(null);
     const [isLoading, setIsLoading] = useState(true);
     const [isEditModalOpen, setIsEditModalOpen] = useState(false);
-    const [activeTab, setActiveTab] = useState(''); // 초기값을 빈 문자열로 설정
+    const [activeTab, setActiveTab] = useState('');
     const [displayImageUrl, setDisplayImageUrl] = useState('');
 
     const defaultProfileImages = [
@@ -193,11 +209,6 @@ export default function MyPage() {
     const [randomDefaultImage] = useState(defaultProfileImages[Math.floor(Math.random() * defaultProfileImages.length)]);
 
     const loadProfile = useCallback(async () => {
-        if (!userId) {
-            setIsLoading(false);
-            setProfile(null);
-            return;
-        }
         setIsLoading(true);
         try {
             const profileData = await fetchMyProfile();
@@ -213,7 +224,7 @@ export default function MyPage() {
         } finally {
             setIsLoading(false);
         }
-    }, [userId, randomDefaultImage]);
+    }, [randomDefaultImage,userId]);
 
     const handleSaveProfile = async (updatedData) => {
         setIsEditModalOpen(false);
@@ -221,7 +232,13 @@ export default function MyPage() {
         try {
             const response = await updateMyProfile(updatedData);
             alert(response.message);
+
             if (response.success) {
+                // Context의 함수를 호출하여 전역 상태와 localStorage를 업데이트
+                updateUserInfo({
+                    memberName: updatedData.memberName,
+                    imgUrl: response.imgUrl // 백엔드 응답에 새 이미지 URL이 포함되어야 함
+                });
                 await loadProfile();
             }
         } catch (error) {
@@ -263,45 +280,53 @@ export default function MyPage() {
                     </section>
 
                     <section className="content-section">
-                        <div className="tab-navigation" style={{ overflowX: 'auto', whiteSpace: 'nowrap', paddingBottom: '10px' }}>
-                            <button
-                                className={`tab-button ${activeTab === 'friends' ? 'active' : ''}`}
-                                onClick={() => setActiveTab(activeTab === 'friends' ? '' : 'friends')}
-                            >
-                                친구 목록
-                            </button>
-                            <button
-                                className={`tab-button ${activeTab === 'liked_movies' ? 'active' : ''}`}
-                                onClick={() => setActiveTab(activeTab === 'liked_movies' ? '' : 'liked_movies')}
-                            >
-                                찜한 영화
-                            </button>
-                            <button
-                                className={`tab-button ${activeTab === 'liked_tvs' ? 'active' : ''}`}
-                                onClick={() => setActiveTab(activeTab === 'liked_tvs' ? '' : 'liked_tvs')}
-                            >
-                                찜한 TV
-                            </button>
-                            <button
-                                className={`tab-button ${activeTab === 'watched_movies' ? 'active' : ''}`}
-                                onClick={() => setActiveTab(activeTab === 'watched_movies' ? '' : 'watched_movies')}
-                            >
-                                시청 영화
-                            </button>
-                            <button
-                                className={`tab-button ${activeTab === 'watched_tvs' ? 'active' : ''}`}
-                                onClick={() => setActiveTab(activeTab === 'watched_tvs' ? '' : 'watched_tvs')}
-                            >
-                                시청 TV
-                            </button>
+                        <div className="tab-navigation">
+                            <button className={`tab-button ${activeTab === 'friends' ? 'active' : ''}`} onClick={() => setActiveTab('friends')}>친구 목록</button>
+                            <button className={`tab-button ${activeTab === 'wish_movies' ? 'active' : ''}`} onClick={() => setActiveTab('wish_movies')}>찜한 영화</button>
+                            <button className={`tab-button ${activeTab === 'wish_tv' ? 'active' : ''}`} onClick={() => setActiveTab('wish_tv')}>찜한 TV</button>
+                            <button className={`tab-button ${activeTab === 'watched_movies' ? 'active' : ''}`} onClick={() => setActiveTab('watched_movies')}>시청한 영화</button>
+                            <button className={`tab-button ${activeTab === 'watched_tv' ? 'active' : ''}`} onClick={() => setActiveTab('watched_tv')}>시청한 TV</button>
                         </div>
 
                         <div className="tab-content-display">
                             {activeTab === 'friends' && <FriendsTab userId={userId} />}
-                            {/*{activeTab === 'liked_movies' && <WishlistTab type="liked_movies" title="찜한 영화" userId={userId} />}*/}
-                            {/*{activeTab === 'liked_tvs' && <WishlistTab type="liked_tvs" title="찜한 TV" userId={userId} />}*/}
-                            {/*{activeTab === 'watched_movies' && <WishlistTab type="watched_movies" title="시청 영화" userId={userId} />}*/}
-                            {/*{activeTab === 'watched_tvs' && <WishlistTab type="watched_tvs" title="시청 TV" userId={userId} />}*/}
+
+                            {activeTab === 'wish_movies' && (
+                                <ContentTab
+                                    key="wish-movies"
+                                    fetchFunction={(params) => getContents({ ...params, status: 'wish', type: 'movie' })}
+                                    // deleteFunction 호출 시 status와 type을 모두 포함하도록 수정
+                                    deleteFunction={(itemId) => deleteContent({ contentId: itemId, status: 'wish', type: 'movie' })}
+                                    contentType="movie"
+                                />
+                            )}
+
+                            {activeTab === 'wish_tv' && (
+                                <ContentTab
+                                    key="wish-tv"
+                                    fetchFunction={(params) => getContents({ ...params, status: 'wish', type: 'tv' })}
+                                    deleteFunction={(itemId) => deleteContent({ contentId: itemId, status: 'wish', type: 'tv' })}
+                                    contentType="tv"
+                                />
+                            )}
+
+                            {activeTab === 'watched_movies' && (
+                                <ContentTab
+                                    key="watched-movies"
+                                    fetchFunction={(params) => getContents({ ...params, status: 'watched', type: 'movie' })}
+                                    deleteFunction={(itemId) => deleteContent({ contentId: itemId, status: 'watched', type: 'movie' })}
+                                    contentType="movie"
+                                />
+                            )}
+
+                            {activeTab === 'watched_tv' && (
+                                <ContentTab
+                                    key="watched-tv"
+                                    fetchFunction={(params) => getContents({ ...params, status: 'watched', type: 'tv' })}
+                                    deleteFunction={(itemId) => deleteContent({ contentId: itemId, status: 'watched', type: 'tv' })}
+                                    contentType="tv"
+                                />
+                            )}
                         </div>
                     </section>
                 </div>

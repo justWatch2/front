@@ -42,7 +42,7 @@ function Posts() {
 
     function postToplist() {
         axios
-            .get(`/api/non-member/getTopPosts?category=${category}`)
+            .get(`http://localhost:8080/api/non-member/getTopPosts?category=${category}`)
             .then((res) => {
                 const newData = res.data.map((item) => ({
                     no: item.no,
@@ -65,7 +65,7 @@ function Posts() {
 
     function postlist() {
         axios
-            .get(`/api/non-member/getPosts?page=${page.num}&category=${category}`)
+            .get(`http://localhost:8080/api/non-member/getPosts?page=${page.num}&category=${category}`)
             .then((response) => {
                 const newData = response.data.list.content.map((item) => ({
                     no: item.no,

@@ -50,7 +50,7 @@ function Post() {
     useEffect(() => {
         checkToken({
             method: "get",
-            url: `/api/non-member/getPost?no=${postNo}`
+            url: `http://localhost:8080/api/non-member/getPost?no=${postNo}`
         })
             .then((res) => {
                 const newPost = {
@@ -80,7 +80,7 @@ function Post() {
     }, [postNo]);
 
     function updateReplys() {
-        axios.get(`/api/non-member/getReplys?no=${postNo}`)
+        axios.get(`http://localhost:8080/api/non-member/getReplys?no=${postNo}`)
             .then((res) => {
                 const updatedReplys = res.data.map((rep) => ({
                     ...rep, likeFlag: rep.liked,
@@ -101,7 +101,7 @@ function Post() {
         formData.append("memberId", id);
         checkToken({
             method: "put",
-            url: "/api/likeReply",
+            url: "http://localhost:8080/api/likeReply",
             data: formData,
         }).then((res) => {
             if (res.data === "success") {
@@ -129,7 +129,7 @@ function Post() {
         formData.append("memberId", id);
         checkToken({
             method: "put",
-            url: "/api/likePost",
+            url: "http://localhost:8080/api/likePost",
             data: formData,
         }).then((res) => {
             if (res.data === "success") {

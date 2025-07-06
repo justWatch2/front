@@ -73,7 +73,7 @@ const FriendRecommend = () => {
             setError(null);
             setIsFriendListLoaded(false);
             try {
-                const url = selectedCategory === '영화' ? '/friend/getList' : '/friend/getDramaList';
+                const url = selectedCategory === '영화' ? 'http://localhost:8080/friend/getList' : 'http://localhost:8080/friend/getDramaList';
                 const response = await autoRefreshCheck({
                     method: "GET",
                     url: url,
@@ -108,7 +108,7 @@ const FriendRecommend = () => {
             try {
                 const response = await autoRefreshCheck({
                     method: "POST",
-                    url: "/recommend/movies",
+                    url: "http://localhost:8080/recommend/movies",
                     data: {
                         memberIds: memberIdsToSend,
                         recommendOption: recommendOption || 'auto',
