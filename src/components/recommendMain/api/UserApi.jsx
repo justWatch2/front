@@ -119,3 +119,43 @@ export const findmemberId = async ()=>{
         throw err;
     }
 };
+
+export const getContents = async ({ status, type, cursor, size = 20 }) => {
+    try {
+        const response = await autoRefreshCheck({
+            method: 'get',
+            url: `${prefix}/contents`,
+            params: { status, type, cursor, size }
+        });
+        // 성공 시, 서버가 보내준 데이터를 그대로 반환합니다.
+        // { items: [...], nextCursor: "..." } 형태를 기대합니다.
+        return response.data;
+    } catch (err) {
+        // Axios 에러 객체에서 서버가 보낸 에러 메시지를 추출합니다.
+        // 만약 서버 메시지가 없으면, 일반적인 네트워크 오류 메시지를 사용합니다.
+        const errorMessage = err.response?.data?.message || "목록을 불러오는 중 오류가 발생했습니다.";
+
+        // 개발자를 위해 콘솔에 상세 에러를 출력합니다.
+        console.error("getContents API Error:", err);
+
+        // 에러가 발생했음을 호출한 컴포넌트(ContentTab)에 알리기 위해 에러를 다시 던집니다.
+        // 이렇게 해야 ContentTab에서도 로딩 상태를 false로 바꾸는 등의 후처리가 가능합니다.
+        throw new Error(errorMessage);
+    }
+};
+
+export const deleteContent = async ({ contentId, status, type }) => {
+    try {
+        const response = await autoRefreshCheck({
+            method: 'delete',
+            url: `${prefix}/contents/${contentId}`,
+            // params에 status를 추가하여 쿼리 스트링으로 함께 보냅니다.
+            params: { status, type }
+        });
+        return response.data;
+    } catch (err) {
+        const errorMessage = err.response?.data?.message || "항목 삭제에 실패했습니다.";
+        console.error("deleteContent API Error:", err);
+        throw new Error(errorMessage);
+    }
+};

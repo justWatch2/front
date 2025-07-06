@@ -89,9 +89,6 @@ const MovieModal = ({ movie, onClose, onDetails, clickPosition }) => {
                     <div className="movie-modal-overlay-buttons">
                         <h2 className="movie-modal-title">{absoluteString}</h2>
                         <div className="modal-buttons-group">
-                            <button className="modal-play-button">
-                                <i className="fas fa-play"></i> 재생
-                            </button>
                             <button
                                 className="modal-info-button"
                                 onClick={() => onDetails(movie)}

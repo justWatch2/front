@@ -23,7 +23,8 @@
 }
 
 .nav__logo {
-    width: 120px;
+    width: 160px;
+    height: 160px;
     object-fit: contain;
     cursor: pointer;
     margin-right: 20px;

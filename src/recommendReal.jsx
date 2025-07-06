@@ -12,11 +12,12 @@ import { RecommendationContext } from './components/recommendMain/Recommendation
 import './components/recommendMain/styles/RecommendReal.css'; // <<< RecommendReal.css가 전역 스타일을 담당합니다.
 import './components/recommendMain/styles/Header.css';
 import './components/recommendMain/styles/MovieModal.css';
+import {useNavigate} from "react-router-dom";
 
 
 function RecommendReal() {
     const { selectedMovie, setSelectedMovie } = useContext(RecommendationContext);
-
+    const navigate = useNavigate();
     useEffect(() => {
         if (selectedMovie) {
             document.body.style.overflow = 'hidden';
@@ -31,6 +32,8 @@ function RecommendReal() {
     const closeModal = () => setSelectedMovie(null);
     const goToDetails = (item) => {
         console.log('상세 페이지로 이동:', item.koreanName || item.korean_title || item.name);
+        console.log(item);
+        // navigate(`datail/${item.}`)
         closeModal();
     };
 

@@ -1,11 +1,13 @@
 
 import axios from "axios";
+import {jwtDecode} from "jwt-decode";
 
 let isRefreshing = false;           // 리프레시 진행 중 여부
 let refreshPromise = null;          // 리프레시 프로미스 공유
 
 export async function autoRefreshCheck(config) {
     const token = localStorage.getItem("jwt");
+    const decode = token ? jwtDecode(token) : null;
 
     if (!token) {
         // alert("로그인이 필요합니다. 로그인해주세요!");
@@ -48,6 +50,8 @@ export async function autoRefreshCheck(config) {
                     })
                     .catch(err => {
                         localStorage.removeItem("jwt");
+                        console.log(err);
+                        alert(err);
                         alert("세션이 만료되었습니다. 다시 로그인 해주세요.");
                         window.location.href = "/";
                         throw err;
@@ -84,7 +88,9 @@ export async function autoRefreshCheck(config) {
             console.log("Data:", error.response?.data);
             console.log("Full error:", error);
 
+
             alert("인증 정보가 유효하지 않습니다.");
+
             window.location.href = "/";
             throw error;
         }

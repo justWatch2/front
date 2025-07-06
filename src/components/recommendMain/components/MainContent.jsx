@@ -143,8 +143,10 @@ const MainContent = () => {
 
     // MovieModal을 위한 함수들 (생략되었던 부분)
     const closeModal = () => setSelectedMovie(null);
+
     const goToDetails = (movie) => {
         console.log('상세 페이지로 이동:', movie.title || movie.name);
+        console.log("123213213",movie)
         closeModal();
     };
 

@@ -38,7 +38,7 @@ function LoginDropdown({ onClose, loginButtonRect }) {
 
             // [핵심 변경] localStorage 직접 조작 대신, Context의 함수를 호출합니다.
             // 이 함수가 localStorage 저장과 상태 변경을 모두 처리합니다.
-            handleLoginContext(token, id);
+            handleLoginContext(token);
 
             // 로그인 성공 후 드롭다운을 닫습니다.
             if (onClose) onClose();
@@ -90,9 +90,9 @@ function LoginDropdown({ onClose, loginButtonRect }) {
       if (event.origin !== "http://localhost:8080" && event.origin !== "http://localhost:3000") return;
 
       // 백엔드에서 token과 userId를 함께 보내준다고 가정합니다.
-      if (event.data?.token && event.data?.userId) {
+      if (event.data?.token ) {
         // 소셜 로그인 성공 시에도 Context 함수를 호출하여 상태를 일관되게 관리합니다.
-        handleLoginContext(event.data.token, event.data.userId);
+        handleLoginContext(event.data.token);
         if (onClose) onClose();
         window.removeEventListener("message", messageHandler);
       }

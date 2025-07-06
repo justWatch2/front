@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useContext } from "react";
-import { RecommendationContext } from "./recommendMain/RecommendationContext"
+import { RecommendationContext } from "./recommendMain/RecommendationContext"; // 실제 경로에 맞게 수정해주세요.
 import "./Nav.css";
 import LoginDropdown from "./recommendFriend/LoginDropdown";
 import ProfileDropdown from "./recommendFriend/ProfileDropdown";
@@ -8,10 +8,9 @@ import logo from "./search/assets/content.png";
 import profileLogo from "./recommendFriend/img/ProfileLogo.png";
 
 export default function Nav() {
-    // 1. Context에서 모든 로그인/유저 정보를 가져옵니다.
-    const { isLoggedIn, userId, handleLogout } = useContext(RecommendationContext);
+    // ✅ 1. Context에서 userId, userImgUrl 등 모든 사용자 정보를 가져옵니다.
+    const { isLoggedIn, userId, userImgUrl, handleLogout } = useContext(RecommendationContext);
 
-    // 2. Nav 컴포넌트 자체의 UI 상태만 관리합니다.
     const [show, setShow] = useState(false);
     const [showLoginDropdown, setShowLoginDropdown] = useState(false);
     const [showProfileDropdown, setShowProfileDropdown] = useState(false);
@@ -23,10 +22,8 @@ export default function Nav() {
         return () => window.removeEventListener("scroll", handleScroll);
     }, []);
 
-
-    const storedImgUrl = localStorage.getItem("img");
-
-    const profileImageSrc = storedImgUrl ? "http://localhost:8080" + storedImgUrl : profileLogo;
+    // ✅ 2. localStorage에서 직접 값을 읽는 로직을 제거하고, Context의 userImgUrl을 사용합니다.
+    const profileImageSrc = userImgUrl ? `http://localhost:8080${userImgUrl}` : profileLogo;
 
     return (
         <nav className={`nav2 ${show && "nav2__black"}`}>
@@ -46,10 +43,9 @@ export default function Nav() {
                     </>
                 ) : (
                     <>
-                        {/* 4. Context의 userId를 표시합니다. */}
+                        {/* 4. Context에서 받아온 최신 userId와 프로필 이미지를 사용합니다. */}
                         <span className="nav__user-id">{userId}님</span>
                         <img alt="User profile" src={profileImageSrc} className="nav__avater" onClick={() => setShowProfileDropdown(prev => !prev)} />
-                        {/* 5. 로그아웃 버튼에 Context의 handleLogout 함수를 연결합니다. */}
                         {showProfileDropdown && <ProfileDropdown onLogout={() => { handleLogout(); setShowProfileDropdown(false); }} />}
                     </>
                 )}

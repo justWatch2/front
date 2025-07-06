@@ -27,7 +27,7 @@ function App() {
 
     const getSearchList = async() => {
         const config={method: "GET",
-                url: "/api/searchlist",};
+                url: "http://localhost:8080/api/searchlist",};
         const res= await autoRefreshCheck(config);
         if (res) {
             setSearchList(res.data);
@@ -100,7 +100,7 @@ function App() {
     const saveSearchHistory = async (keyword, signal) => {
         if (!keyword) return;
         const config= { method: "POST",
-                url: "/api/searchlist",
+                url: "http://localhost:8080/api/searchlist",
                 signal,
                 data:{ title: keyword},};
 
