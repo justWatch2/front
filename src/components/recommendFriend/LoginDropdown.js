@@ -1,6 +1,8 @@
 import React, { useState, useEffect, useContext } from "react"; // useContext 추가
 import { RecommendationContext } from '../recommendMain/RecommendationContext'; // Context 경로 추가
 import SignUP from "../login/SignUp";
+import {jwtDecode} from "jwt-decode";
+
 
 function LoginDropdown({ onClose, loginButtonRect }) {
   // 1. Context에서 로그인 처리 함수를 가져옵니다.
@@ -90,7 +92,8 @@ function LoginDropdown({ onClose, loginButtonRect }) {
       if (event.origin !== "http://localhost:8080" && event.origin !== "http://localhost:3000") return;
 
       // 백엔드에서 token과 userId를 함께 보내준다고 가정합니다.
-      if (event.data?.token ) {
+      if (event.data?.token) {
+
         // 소셜 로그인 성공 시에도 Context 함수를 호출하여 상태를 일관되게 관리합니다.
         handleLoginContext(event.data.token);
         if (onClose) onClose();

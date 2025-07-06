@@ -40,9 +40,9 @@
   },
   "scripts": {
     "start": "react-scripts start",
-    "build": "react-scripts build",
-    "test": "react-scripts test",
-    "eject": "react-scripts eject"
+    "build": "../junggkim/node_modules/.bin/react-scripts build",
+    "test": "../junggkim/node_modules/.bin/react-scripts test",
+    "eject": "../junggkim/node_modules/.bin/react-scripts eject"
   },
   "eslintConfig": {
     "extends": [

@@ -18,6 +18,14 @@ function Detail() {
     const [dependency, setDependency] = useState([]);
     const token = localStorage.getItem("jwt");
 
+    useEffect(
+        ()=>{
+            window.scrollTo(0,0);
+
+        },[]
+    );
+
+
     useEffect(() => {
         const load= async ()=>{
             const urlBase = category === "movie" ? "movie" : "tv";
@@ -66,7 +74,7 @@ function Detail() {
 
     useEffect(() => {
         if (contents)
-            axios.get(`/api/non-member/dependency/${contents.title}/${contents.original_title}`)
+            axios.get(`/api/non-member/dependency/${contents.title}/${/[ㄱ-ㅎㅏ-ㅣ가-힣]/.test(contents.original_title)}`)
                 .then(res => setDependency(res.data));
     }, [contents]);
 
@@ -306,7 +314,7 @@ function Detail() {
                         <h2>연관 게시글</h2>
                         {dependency.map((item) => (
                             <div className={styles.relatedPost} key={item.no}>
-                                <Link to={`/gullview/${item.no}`} style={{ textDecoration: 'none', color: 'inherit' }}>
+                                <Link to={`/post/${item.no}`} style={{ textDecoration: 'none', color: 'inherit' }}>
                                     <div className={styles.card}>
                                         <div className={styles.cardBody}>
                                             <h5 className={styles.relatedPostTitle}>{item.title}</h5>
