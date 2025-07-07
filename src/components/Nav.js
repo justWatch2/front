@@ -8,7 +8,7 @@ import logo from "./search/assets/content.png";
 import profileLogo from "./recommendFriend/img/ProfileLogo.png";
 
 export default function Nav() {
-    // ✅ 1. Context에서 userId, userImgUrl 등 모든 사용자 정보를 가져옵니다.
+    // ✅ 1. Context에서 필요한 모든 상태와 함수를 가져옵니다.
     const { isLoggedIn, userId, userImgUrl, handleLogout } = useContext(RecommendationContext);
 
     const [show, setShow] = useState(false);
@@ -22,7 +22,7 @@ export default function Nav() {
         return () => window.removeEventListener("scroll", handleScroll);
     }, []);
 
-    // ✅ 2. localStorage에서 직접 값을 읽는 로직을 제거하고, Context의 userImgUrl을 사용합니다.
+    // ✅ 2. localStorage를 직접 참조하지 않고, Context의 userImgUrl 상태를 사용합니다.
     const profileImageSrc = userImgUrl ? `http://localhost:8080${userImgUrl}` : profileLogo;
 
     return (
@@ -35,7 +35,7 @@ export default function Nav() {
                 <Link style={{ textDecoration: "none" }} to={"/posts/common"}><h2 className="nav__recommend">게시판</h2></Link>
             </div>
             <div className="nav__right">
-                {/* 3. Context의 isLoggedIn 상태에 따라 UI를 분기합니다. */}
+                {/* ✅ 3. Context의 isLoggedIn 상태에 따라 UI를 렌더링합니다. */}
                 {!isLoggedIn ? (
                     <>
                         <button className="nav__login" onClick={() => setShowLoginDropdown(true)}>로그인</button>
@@ -43,7 +43,7 @@ export default function Nav() {
                     </>
                 ) : (
                     <>
-                        {/* 4. Context에서 받아온 최신 userId와 프로필 이미지를 사용합니다. */}
+                        {/* ✅ 4. Context에서 받아온 최신 userId와 프로필 이미지를 사용합니다. */}
                         <span className="nav__user-id">{userId}님</span>
                         <img alt="User profile" src={profileImageSrc} className="nav__avater" onClick={() => setShowProfileDropdown(prev => !prev)} />
                         {showProfileDropdown && <ProfileDropdown onLogout={() => { handleLogout(); setShowProfileDropdown(false); }} />}

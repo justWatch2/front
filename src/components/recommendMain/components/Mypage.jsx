@@ -7,8 +7,9 @@ import {jwtDecode} from "jwt-decode";
 import ProfileLogo from "../../recommendFriend/img/ProfileLogo.png";
 import ContentTab  from "./ContentTab";
 
-// --- '프로필 수정' 모달 컴포넌트 ---
+// --- '프로필 수정' 모달 컴포넌트 (변경 없음) ---
 const ProfileEditModal = ({ user, displayImageUrl, onClose, onSave }) => {
+    // ... (기존 코드와 동일)
     const [memberId, setMemberId] = useState(user.memberId);
     const [memberName, setMemberName] = useState(user.memberName);
     const [currentPassword, setCurrentPassword] = useState('');
@@ -32,10 +33,8 @@ const ProfileEditModal = ({ user, displayImageUrl, onClose, onSave }) => {
 
     const handleSave = () => {
         if (isSocialLogin) {
-            // 소셜 로그인이면 비밀번호 검증 없이 닉네임과 이미지만 저장
             onSave({ memberId, memberName, imageFile });
         } else {
-            // 일반 로그인이면 기존 비밀번호 검증
             if (password && password !== confirmPassword) {
                 alert('새 비밀번호가 일치하지 않습니다.');
                 return;
@@ -104,8 +103,9 @@ const ProfileEditModal = ({ user, displayImageUrl, onClose, onSave }) => {
     );
 };
 
-// --- FriendsTab 컴포넌트 ---
+// --- FriendsTab 컴포넌트 (변경 없음) ---
 const FriendsTab = ({ userId }) => {
+    // ... (기존 코드와 동일)
     const [friends, setFriends] = useState([]);
     const [isLoading, setIsLoading] = useState(false);
     const [showDelete, setShowDelete] = useState({});
@@ -195,28 +195,29 @@ const FriendsTab = ({ userId }) => {
 
 // --- 마이페이지 메인 컴포넌트 ---
 export default function MyPage() {
+    // ✅ Context에서 userId와 새로 만든 updateUserInfo 함수를 가져옵니다.
     const { userId, updateUserInfo } = useContext(RecommendationContext);
     const [profile, setProfile] = useState(null);
     const [isLoading, setIsLoading] = useState(true);
     const [isEditModalOpen, setIsEditModalOpen] = useState(false);
     const [activeTab, setActiveTab] = useState('');
     const [displayImageUrl, setDisplayImageUrl] = useState('');
-
-    const defaultProfileImages = [
-        'https://placehold.co/100x100/e50914/ffffff?text=W',
-        'https://placehold.co/100x100/333333/ffffff?text=A',
-    ];
-    const [randomDefaultImage] = useState(defaultProfileImages[Math.floor(Math.random() * defaultProfileImages.length)]);
+    const [randomDefaultImage] = useState('https://placehold.co/100x100/e50914/ffffff?text=W');
 
     const loadProfile = useCallback(async () => {
+        if (!userId) { // userId가 없으면 프로필 로드 시도 안함
+            setIsLoading(false);
+            return;
+        }
         setIsLoading(true);
         try {
             const profileData = await fetchMyProfile();
             setProfile(profileData);
+            // ✅ API 응답의 img_url을 사용하고, 없으면 기본 이미지를 사용합니다.
             if (profileData && profileData.img_url) {
                 setDisplayImageUrl(`http://localhost:8080${profileData.img_url}`);
             } else {
-                setDisplayImageUrl(randomDefaultImage);
+                setDisplayImageUrl(ProfileLogo); // 기본 로고 이미지로 설정
             }
         } catch (error) {
             console.error("프로필 정보를 불러오는 데 실패했습니다:", error);
@@ -224,7 +225,7 @@ export default function MyPage() {
         } finally {
             setIsLoading(false);
         }
-    }, [randomDefaultImage,userId]);
+    }, [userId]); // userId가 변경될 때마다 프로필을 다시 로드
 
     const handleSaveProfile = async (updatedData) => {
         setIsEditModalOpen(false);
@@ -234,11 +235,12 @@ export default function MyPage() {
             alert(response.message);
 
             if (response.success) {
-                // Context의 함수를 호출하여 전역 상태와 localStorage를 업데이트
+                // ✅ [핵심] Context의 함수를 호출하여 전역 상태와 localStorage를 업데이트
                 updateUserInfo({
                     memberName: updatedData.memberName,
                     imgUrl: response.imgUrl // 백엔드 응답에 새 이미지 URL이 포함되어야 함
                 });
+                // ✅ 상태 업데이트 후, 프로필 정보를 다시 불러와 화면을 갱신
                 await loadProfile();
             }
         } catch (error) {
@@ -253,6 +255,7 @@ export default function MyPage() {
     }, [loadProfile]);
 
     if (isLoading) return <LoadingPage />;
+    // ✅ userId가 아닌 profile 객체로 로그인 여부 판단
     if (!profile) {
         return (
             <div className="mypage-wrapper" style={{ textAlign: 'center', paddingTop: '10rem' }}>
@@ -278,8 +281,8 @@ export default function MyPage() {
                             <button className="btn btn-delete" onClick={() => alert('회원 탈퇴 기능 구현 예정')}>회원 탈퇴</button>
                         </div>
                     </section>
-
                     <section className="content-section">
+                        {/* ... (탭 관련 코드는 변경 없음) ... */}
                         <div className="tab-navigation">
                             <button className={`tab-button ${activeTab === 'friends' ? 'active' : ''}`} onClick={() => setActiveTab('friends')}>친구 목록</button>
                             <button className={`tab-button ${activeTab === 'wish_movies' ? 'active' : ''}`} onClick={() => setActiveTab('wish_movies')}>찜한 영화</button>
@@ -295,7 +298,6 @@ export default function MyPage() {
                                 <ContentTab
                                     key="wish-movies"
                                     fetchFunction={(params) => getContents({ ...params, status: 'wish', type: 'movie' })}
-                                    // deleteFunction 호출 시 status와 type을 모두 포함하도록 수정
                                     deleteFunction={(itemId) => deleteContent({ contentId: itemId, status: 'wish', type: 'movie' })}
                                     contentType="movie"
                                 />
