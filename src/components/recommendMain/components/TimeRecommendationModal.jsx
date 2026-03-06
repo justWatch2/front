@@ -13,7 +13,8 @@ function TimeRecommendation() {
         isMemberModeActive,
         selectedMediaType,
         selectedRegion,
-        selectedAgeRating
+        selectedAgeRating,
+        bindRecommendRequest
     } = useContext(RecommendationContext);
 
     const [isClosing, setIsClosing] = useState(false);
@@ -76,11 +77,10 @@ function TimeRecommendation() {
                 };
 
                 responseData = await MemberRecommendApi(payload);
-                requestRecommendation({
-                    recommendationId: 'user',
-                    data: responseData.data,
-                    isMemberModeActiveAtCall: true
-                });
+                const requestId = responseData?.data?.requestId;
+                if (requestId) {
+                    bindRecommendRequest(requestId);
+                }
 
             }else {
                 // 1. API 응답을 response 변수에 저장

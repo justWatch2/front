@@ -91,6 +91,7 @@
 //     }
 // }
 import axios from "axios";
+import { API_BASE_URL } from "../config/api";
 
 let isRefreshing = false;
 let refreshSubscribers = [];
@@ -151,7 +152,7 @@ export async function autoRefreshCheck(config) {
                 if (!isRefreshing) {
                     isRefreshing = true;
 
-                    axios.post("http://localhost:8080/api/auth/refresh", {}, {
+                    axios.post(`${API_BASE_URL}/api/auth/refresh`, {}, {
                         withCredentials: true,
                     })
                         .then((refreshRes) => {

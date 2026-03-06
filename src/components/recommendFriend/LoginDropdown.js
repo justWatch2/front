@@ -2,6 +2,7 @@ import React, { useState, useEffect, useContext } from "react"; // useContext �
 import { RecommendationContext } from '../recommendMain/RecommendationContext'; // Context 경로 추가
 import SignUP from "../login/SignUp";
 import {jwtDecode} from "jwt-decode";
+import { API_BASE_URL } from "../../config/api";
 
 
 function LoginDropdown({ onClose, loginButtonRect }) {
@@ -14,7 +15,7 @@ function LoginDropdown({ onClose, loginButtonRect }) {
 
   // 로그인 부분 (사용자님의 기존 로직을 기반으로 수정)
   function handleLogin() {
-    fetch("http://localhost:8080/api/login", {
+    fetch(`${API_BASE_URL}/api/login`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       credentials: 'include',
@@ -74,9 +75,9 @@ function LoginDropdown({ onClose, loginButtonRect }) {
   };
 
   const SOCIAL_LOGIN_URLS = {
-    google: "http://localhost:8080/oauth2/authorization/google",
-    facebook: "http://localhost:8080/oauth2/authorization/facebook",
-    kakao: "http://localhost:8080/oauth2/authorization/kakao",
+    google: `${API_BASE_URL}/oauth2/authorization/google`,
+    facebook: `${API_BASE_URL}/oauth2/authorization/facebook`,
+    kakao: `${API_BASE_URL}/oauth2/authorization/kakao`,
   };
 
   // 소셜 로그인 (Context와 연동되도록 수정)
@@ -89,7 +90,9 @@ function LoginDropdown({ onClose, loginButtonRect }) {
 
     const messageHandler = (event) => {
       // 보안을 위해 origin 체크 (개발 환경과 서버 환경 모두 허용)
-      if (event.origin !== "http://localhost:8080" && event.origin !== "http://localhost:3000") return;
+      const apiOrigin = new URL(API_BASE_URL).origin;
+      const frontOrigin = window.location.origin;
+      if (event.origin !== apiOrigin && event.origin !== frontOrigin) return;
 
       // 백엔드에서 token과 userId를 함께 보내준다고 가정합니다.
       if (event.data?.token) {

@@ -1,7 +1,8 @@
-import React, { createContext, useState, useCallback, useEffect } from 'react';
+import React, { createContext, useState, useCallback, useEffect, useRef } from 'react';
 import {autoRefreshCheck} from "../../tokenUtils/TokenUtils";
 import {findmemberId} from "./api/UserApi";
 import InviteModal from "../recommendFriend/InviteModal";
+import { API_BASE_URL, WS_BASE_URL } from "../../config/api";
 
 export const RecommendationContext = createContext();
 
@@ -19,6 +20,7 @@ export const RecommendationProvider = ({ children }) => {
     const [selectedMediaType, setSelectedMediaType] = useState('');
     const [selectedRegion, setSelectedRegion] = useState('');
     const [selectedAgeRating, setSelectedAgeRating] = useState('');
+    const wsRef = useRef(null);
 
     //초대 부분
     // 자동 친구 추가 기능 state 추가
@@ -57,6 +59,7 @@ export const RecommendationProvider = ({ children }) => {
             setIsMemberModeActive(false);
         }
     }, [isLoggedIn]);
+
 
     // 3. 로그인 성공 시 호출될 함수
     const handleLogin = useCallback(async (token) => {
@@ -100,7 +103,7 @@ export const RecommendationProvider = ({ children }) => {
         }
         try {
             const response = await autoRefreshCheck({
-                url: "http://localhost:8080/api/friend/nicknameByUuids",
+                url: `${API_BASE_URL}/api/friend/nicknameByUuids`,
                 method: "POST",
                 data: {
                     uuids: uuidTokens.map((item) => item.value),
@@ -129,12 +132,76 @@ export const RecommendationProvider = ({ children }) => {
     };
 
     // 4. 로그아웃 시 호출될 함수
+    const requestRecommendation = useCallback(({ recommendationId, data, isMemberModeActiveAtCall }) => {
+        const processedData = {};
+        if (isMemberModeActiveAtCall || recommendationId === 'complex') {
+            processedData.complexList = data?.userSelectedList || data?.complexList || (Array.isArray(data) ? data : []);
+        } else {
+            processedData.domesticMovies = data?.domesticMovies || [];
+            processedData.internationalMovies = data?.internationalMovies || [];
+            processedData.domesticTV = data?.domesticTV || [];
+            processedData.internationalTV = data?.internationalTV || [];
+        }
+        setRecommendations({ [recommendationId]: processedData });
+        setIsLoading(false);
+    }, []);
+
+    const sendResultAck = useCallback((requestId) => {
+        if (!requestId) return;
+        const ws = wsRef.current;
+        if (!ws || ws.readyState !== WebSocket.OPEN) return;
+        ws.send(JSON.stringify({ type: 'result_ack', requestId }));
+    }, []);
+
+    const handleWsResult = useCallback((payload) => {
+        if (!payload) return;
+        const data = payload.data || payload;
+        const requestId = payload.requestId || data?.requestId;
+        requestRecommendation({
+            recommendationId: 'user',
+            data,
+            isMemberModeActiveAtCall: true,
+        });
+        if (requestId) {
+            sendResultAck(requestId);
+        }
+    }, [requestRecommendation, sendResultAck]);
+
+    const connectWebSocket = useCallback(() => {
+        if (wsRef.current) return;
+        const wsUrl = `${WS_BASE_URL}/ws/recommend`;
+        const ws = new WebSocket(wsUrl);
+        ws.onmessage = (event) => {
+            try {
+                const msg = JSON.parse(event.data);
+                if (msg.type === 'result') {
+                    handleWsResult(msg);
+                } else if (msg.userSelectedList || msg.data) {
+                    handleWsResult(msg);
+                }
+            } catch (e) {
+                console.warn('WebSocket message parse error', e);
+            }
+        };
+        ws.onclose = () => {
+            wsRef.current = null;
+        };
+        wsRef.current = ws;
+    }, [handleWsResult]);
+
+    const disconnectWebSocket = useCallback(() => {
+        if (wsRef.current) {
+            wsRef.current.close();
+            wsRef.current = null;
+        }
+    }, []);
+
     const handleLogout = useCallback(async () => {
         try {
             // 서버에 로그아웃 요청 API 호출
             await autoRefreshCheck({
                 method: "POST",
-                url: "http://localhost:8080/api/logout",
+                url: `${API_BASE_URL}/api/logout`,
             });
 
             alert("로그아웃 되었습니다.");
@@ -149,7 +216,22 @@ export const RecommendationProvider = ({ children }) => {
             localStorage.removeItem("img");
             setIsLoggedIn(false);
             setUserId(null);
+            disconnectWebSocket();
         }
+    }, []);
+
+    useEffect(() => {
+        if (isLoggedIn) {
+            connectWebSocket();
+        } else {
+            disconnectWebSocket();
+        }
+    }, [isLoggedIn, connectWebSocket, disconnectWebSocket]);
+
+    const bindRecommendRequest = useCallback((requestId) => {
+        const ws = wsRef.current;
+        if (!ws || ws.readyState !== WebSocket.OPEN) return;
+        ws.send(JSON.stringify({ type: 'bind', requestId }));
     }, []);
 
     // 5. 회원 모드 버튼 클릭 시 호출될 함수
@@ -165,19 +247,6 @@ export const RecommendationProvider = ({ children }) => {
     const openRecommendation = useCallback((type) => setActiveRecommendation(type), []);
     const closeRecommendation = useCallback(() => setActiveRecommendation(null), []);
 
-    const requestRecommendation = useCallback(({ recommendationId, data, isMemberModeActiveAtCall }) => {
-        const processedData = {};
-        if (isMemberModeActiveAtCall || recommendationId === 'complex') {
-            processedData.complexList = data?.userSelectedList || data?.complexList || (Array.isArray(data) ? data : []);
-        } else {
-            processedData.domesticMovies = data?.domesticMovies || [];
-            processedData.internationalMovies = data?.internationalMovies || [];
-            processedData.domesticTV = data?.domesticTV || [];
-            processedData.internationalTV = data?.internationalTV || [];
-        }
-        setRecommendations({ [recommendationId]: processedData });
-        setIsLoading(false);
-    }, []);
     const clearRecommendations = useCallback(() => {
         setRecommendations({});
         setActiveRecommendation(null);
@@ -195,7 +264,8 @@ export const RecommendationProvider = ({ children }) => {
         closeRecommendation, requestRecommendation, clearRecommendations,
         selectedCategory, setSelectedCategory, selectedMediaType, setSelectedMediaType,
         selectedRegion, setSelectedRegion, selectedAgeRating, setSelectedAgeRating,
-        handleLogin, handleLogout, toggleMemberMode,userImgUrl,setUserImgUrl
+        handleLogin, handleLogout, toggleMemberMode,userImgUrl,setUserImgUrl,
+        bindRecommendRequest
     };
 
     return (

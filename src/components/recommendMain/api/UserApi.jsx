@@ -1,7 +1,7 @@
 import { autoRefreshCheck } from '../../../tokenUtils/TokenUtils';
+import { API_BASE_URL } from "../../../config/api";
 
-export const API_SERVER_HOST = "http://localhost:8080";
-const prefix = `${API_SERVER_HOST}/member`;
+const prefix = `${API_BASE_URL}/member`;
 
 export const fetchMyProfile = async () => {
     try {

@@ -14,6 +14,7 @@ import {
     Chip,
     Typography,
 } from "@mui/material";
+import { API_BASE_URL } from "../../config/api";
 
 // 커밋 확인용
 
@@ -42,7 +43,7 @@ function Posts() {
 
     function postToplist() {
         axios
-            .get(`http://localhost:8080/api/non-member/getTopPosts?category=${category}`)
+            .get(`${API_BASE_URL}/api/non-member/getTopPosts?category=${category}`)
             .then((res) => {
                 const newData = res.data.map((item) => ({
                     no: item.no,
@@ -65,7 +66,7 @@ function Posts() {
 
     function postlist() {
         axios
-            .get(`http://localhost:8080/api/non-member/getPosts?page=${page.num}&category=${category}`)
+            .get(`${API_BASE_URL}/api/non-member/getPosts?page=${page.num}&category=${category}`)
             .then((response) => {
                 const newData = response.data.list.content.map((item) => ({
                     no: item.no,

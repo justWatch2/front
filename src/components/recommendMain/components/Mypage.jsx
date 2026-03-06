@@ -5,6 +5,7 @@ import LoadingPage from "./LoadingPage";
 import '../styles/Mypage.css';
 import {jwtDecode} from "jwt-decode";
 import ProfileLogo from "../../recommendFriend/img/ProfileLogo.png";
+import { IMAGE_BASE_URL } from "../../../config/api";
 import ContentTab  from "./ContentTab";
 
 // --- '프로필 수정' 모달 컴포넌트 ---
@@ -172,7 +173,7 @@ const FriendsTab = ({ userId }) => {
                         onMouseLeave={() => handleMouseLeave(friend.memberId)}
                     >
                         <img
-                            src={friend.imgUrl ? `http://localhost:8080${friend.imgUrl}` : ProfileLogo}
+                            src={friend.imgUrl ? `${IMAGE_BASE_URL}${friend.imgUrl}` : ProfileLogo}
                             alt={friend.memberId}
                             className="friend-image"
                         />
@@ -214,7 +215,7 @@ export default function MyPage() {
             const profileData = await fetchMyProfile();
             setProfile(profileData);
             if (profileData && profileData.img_url) {
-                setDisplayImageUrl(`http://localhost:8080${profileData.img_url}`);
+                setDisplayImageUrl(`${IMAGE_BASE_URL}${profileData.img_url}`);
             } else {
                 setDisplayImageUrl(randomDefaultImage);
             }

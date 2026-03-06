@@ -1,13 +1,11 @@
 import React, { useEffect } from "react";
 import { autoRefreshCheck } from "../../tokenUtils/TokenUtils";
-
-
-
+import { API_BASE_URL } from "../../config/api";
 
 const KakaoInviteButton = () => {
     useEffect(() => {
         if (window.Kakao && !window.Kakao.isInitialized()) {
-            window.Kakao.init("af78237451dac157719c9585af264c58"); // 자신의 JavaScript 키 입력
+            window.Kakao.init("af78237451dac157719c9585af264c58"); // ?먯떊??JavaScript ???낅젰
             console.log("Kakao SDK initialized");
         }
 
@@ -15,27 +13,27 @@ const KakaoInviteButton = () => {
 
     const sendInviteLink = async () => {
         if (!window.Kakao) {
-            alert("카카오 SDK가 로드되지 않았습니다.");
+            alert("移댁뭅??SDK媛 濡쒕뱶?섏? ?딆븯?듬땲??");
             return;
         }
 
-        //여기서 서버로 보내기
+        //?ш린???쒕쾭濡?蹂대궡湲?
         const res = await autoRefreshCheck({
             method: "post",
-            url: "http://localhost:8080/api/invite/create", // 서버 API 주소
+            url: `${API_BASE_URL}/api/invite/create`, // ?쒕쾭 API 二쇱냼
         });
 
         if (res == null){
             return ;
         }
         alert(res.data);
-        const inviteUrl = res.data; // 서버가 반환한 UUID 링크
+        const inviteUrl = res.data; // ?쒕쾭媛 諛섑솚??UUID 留곹겕
 
         window.Kakao.Link.sendDefault({
             objectType: "feed",
             content: {
-                title: "친구추가 요청입니다!! 이상한거 아닙니다 스펨아니에요 ",
-                description: "초대자가 친구추가를 원합니다 로그인해주세요!! ",
+                title: "移쒓뎄異붽? ?붿껌?낅땲??! ?댁긽?쒓굅 ?꾨떃?덈떎 ?ㅽ렓?꾨땲?먯슂 ",
+                description: "珥덈??먭? 移쒓뎄異붽?瑜??먰빀?덈떎 濡쒓렇?명빐二쇱꽭??! ",
                 imageUrl: "https://gyu0918.github.io/shareImage/ProfileLogo.png",
                 link: {
                     mobileWebUrl: inviteUrl,
@@ -44,7 +42,7 @@ const KakaoInviteButton = () => {
             },
             buttons: [
                 {
-                    title: "초대 링크 열기",
+                    title: "珥덈? 留곹겕 ?닿린",
                     link: {
                         mobileWebUrl: inviteUrl,
                         webUrl: inviteUrl,
@@ -56,7 +54,7 @@ const KakaoInviteButton = () => {
 
     return (
         <button className="dropdown-item" onClick={sendInviteLink}>
-            친구 초대
+            移쒓뎄 珥덈?
         </button>
     );
 };

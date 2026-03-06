@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Button } from '@mui/material';
 import '../styles/LoginSideMenu.css';
+import { API_BASE_URL } from "../../../config/api";
 
 function LoginSideMenu({ open, onClose }) {
     const [username, setUsername] = useState('');
@@ -8,7 +9,7 @@ function LoginSideMenu({ open, onClose }) {
 
     function testProtectedApi() {
         const token = localStorage.getItem('jwt');
-        fetch('http://localhost:8080/api/protected/test', {
+        fetch(`${API_BASE_URL}/api/protected/test`, {
             method: 'GET',
             headers: { Authorization: token },
         })
@@ -16,7 +17,7 @@ function LoginSideMenu({ open, onClose }) {
                 if (res.status === 401) {
                     console.warn('401 Unauthorized 발생 → 토큰 만료');
                     alert('토큰 만료됨. refresh 요청을 시도합니다.');
-                    return fetch('http://localhost:8080/api/auth/refresh', {
+                    return fetch(`${API_BASE_URL}/api/auth/refresh`, {
                         method: 'POST',
                         credentials: 'include',
                     });
@@ -49,7 +50,7 @@ function LoginSideMenu({ open, onClose }) {
     function login() {
         const memberId = username;
         const memberPw = password;
-        fetch('http://localhost:8080/api/login', {
+        fetch(`${API_BASE_URL}/api/login`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             credentials: 'include',

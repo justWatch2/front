@@ -16,6 +16,7 @@ import {
 } from "@mui/material";
 import ThumbUpIcon from "@mui/icons-material/ThumbUp";
 import {checkToken} from "../../tokenUtils/TokenUtil4Post";
+import { API_BASE_URL } from "../../config/api";
 
 // key2 브랜치
 
@@ -50,7 +51,7 @@ function Post() {
     useEffect(() => {
         checkToken({
             method: "get",
-            url: `http://localhost:8080/api/non-member/getPost?no=${postNo}`
+            url: `${API_BASE_URL}/api/non-member/getPost?no=${postNo}`
         })
             .then((res) => {
                 const newPost = {
@@ -80,7 +81,7 @@ function Post() {
     }, [postNo]);
 
     function updateReplys() {
-        axios.get(`http://localhost:8080/api/non-member/getReplys?no=${postNo}`)
+        axios.get(`${API_BASE_URL}/api/non-member/getReplys?no=${postNo}`)
             .then((res) => {
                 const updatedReplys = res.data.map((rep) => ({
                     ...rep, likeFlag: rep.liked,
@@ -101,7 +102,7 @@ function Post() {
         formData.append("memberId", id);
         checkToken({
             method: "put",
-            url: "http://localhost:8080/api/likeReply",
+            url: `${API_BASE_URL}/api/likeReply`,
             data: formData,
         }).then((res) => {
             if (res.data === "success") {
@@ -129,7 +130,7 @@ function Post() {
         formData.append("memberId", id);
         checkToken({
             method: "put",
-            url: "http://localhost:8080/api/likePost",
+            url: `${API_BASE_URL}/api/likePost`,
             data: formData,
         }).then((res) => {
             if (res.data === "success") {

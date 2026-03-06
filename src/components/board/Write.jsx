@@ -13,6 +13,7 @@ import {
     InputLabel, Divider,
 } from "@mui/material";
 import {checkToken} from "../../tokenUtils/TokenUtil4Post";
+import { API_BASE_URL } from "../../config/api";
 
 function Write() {
     const {no} = useParams();
@@ -47,7 +48,7 @@ function Write() {
         } else {
             checkToken({
                 method: 'get',
-                url: 'http://localhost:8080/api/non-member/getMemberId'
+                url: `${API_BASE_URL}/api/non-member/getMemberId`
             }).then(res => {
                 const newPost = {
                     title: "",

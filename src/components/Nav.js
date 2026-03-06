@@ -6,6 +6,7 @@ import ProfileDropdown from "./recommendFriend/ProfileDropdown";
 import { Link, useNavigate } from "react-router-dom";
 import logo from "./search/assets/content.png";
 import profileLogo from "./recommendFriend/img/ProfileLogo.png";
+import { IMAGE_BASE_URL } from "../config/api";
 
 export default function Nav() {
     // ✅ 1. Context에서 userId, userImgUrl 등 모든 사용자 정보를 가져옵니다.
@@ -23,7 +24,7 @@ export default function Nav() {
     }, []);
 
     // ✅ 2. localStorage에서 직접 값을 읽는 로직을 제거하고, Context의 userImgUrl을 사용합니다.
-    const profileImageSrc = userImgUrl ? `http://localhost:8080${userImgUrl}` : profileLogo;
+    const profileImageSrc = userImgUrl ? `${IMAGE_BASE_URL}${userImgUrl}` : profileLogo;
 
     return (
         <nav className={`nav2 ${show && "nav2__black"}`}>

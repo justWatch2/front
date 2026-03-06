@@ -8,7 +8,8 @@ function MBTIRecommendation() {
     const {
         activeRecommendation, closeRecommendation, requestRecommendation,
         setSelectedCategory, setIsLoading, isMemberModeActive,
-        selectedMediaType, selectedRegion, selectedAgeRating
+        selectedMediaType, selectedRegion, selectedAgeRating,
+        bindRecommendRequest
     } = useContext(RecommendationContext);
 
     const [mbti, setMbti] = useState('');
@@ -70,11 +71,10 @@ function MBTIRecommendation() {
                 };
 
                 const response = await MemberRecommendApi(payload);
-                requestRecommendation({
-                    recommendationId: 'user',
-                    data: response.data,
-                    isMemberModeActiveAtCall: true
-                });
+                const requestId = response?.data?.requestId;
+                if (requestId) {
+                    bindRecommendRequest(requestId);
+                }
 
             } else {
                 // 일반 추천 로직

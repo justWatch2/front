@@ -9,7 +9,7 @@ import Posts from "./components/board/Posts";
 import Write from "./components/board/Write";
 import Post from "./components/board/Post";
 import RecommendReal from "./recommendReal.jsx";
-import FriendRecommend from "./components/recommendFriend/FriendRecommend";
+import FriendRecommend from "./components/recommendFriend/FriendRecommend.js";
 import MyPage from "./components/recommendMain/components/Mypage";
 
 

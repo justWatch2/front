@@ -7,6 +7,7 @@ import Result from "./Result.jsx";
 import Years from "./data/Years.js";
 import styles from "./Home.module.css";
 import {autoRefreshCheck} from "../../tokenUtils/TokenUtils.js"
+import { API_BASE_URL } from "../../config/api";
 
 function App() {
     const [inputValue, setInputValue] = useState('');
@@ -27,7 +28,7 @@ function App() {
 
     const getSearchList = async() => {
         const config={method: "GET",
-                url: "http://localhost:8080/api/searchlist",};
+                url: `${API_BASE_URL}/api/searchlist`,};
         const res= await autoRefreshCheck(config);
         if (res) {
             setSearchList(res.data);
@@ -100,7 +101,7 @@ function App() {
     const saveSearchHistory = async (keyword, signal) => {
         if (!keyword) return;
         const config= { method: "POST",
-                url: "http://localhost:8080/api/searchlist",
+                url: `${API_BASE_URL}/api/searchlist`,
                 signal,
                 data:{ title: keyword},};
 

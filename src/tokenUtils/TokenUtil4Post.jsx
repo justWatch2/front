@@ -1,4 +1,5 @@
 import axios from "axios";
+import { API_BASE_URL } from "../config/api";
 
 let isRefreshing = false;           // 리프레시 진행 중 여부
 let refreshPromise = null;
@@ -36,7 +37,7 @@ export async function checkToken(config) {
                 // 첫 번째 요청만 리프레시 시도
                 isRefreshing = true;
                 refreshPromise = axios.post(
-                    "http://localhost:8080/api/auth/refresh",
+                    `${API_BASE_URL}/api/auth/refresh`,
                     {},
                     { withCredentials: true }
                 )

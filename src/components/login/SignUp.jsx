@@ -15,6 +15,7 @@ import {
 } from "@mui/material";
 import axios from "axios";
 import CloseIcon from "@mui/icons-material/Close";
+import { API_BASE_URL } from "../../config/api";
 
 function SignUp({onClose}) {
     const navigate = useNavigate();
@@ -33,7 +34,7 @@ function SignUp({onClose}) {
     };
 
     function checkId(values, setFieldValue) {
-        axios.get("http://localhost:8080/api/checkId?id=" + values.id).then((res) => {
+        axios.get(`${API_BASE_URL}/api/checkId?id=${values.id}`).then((res) => {
             if (res.data === "success") {
                 setFieldValue("idFlag", true);
                 alert("사용 가능한 아이디입니다.");
@@ -137,7 +138,7 @@ function SignUp({onClose}) {
                         formData.append("img", img);
 
                         axios
-                            .post("http://localhost:8080/api/signUp", formData)
+                            .post(`${API_BASE_URL}/api/signUp`, formData)
                             .then((res) => {
                                 alert(res.data);
                                 if (onClose) onClose();
