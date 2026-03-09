@@ -130,4 +130,5 @@ psd
 thumb
 sketch
 
-# End of https://www.toptal.com/developers/gitignore/api/intellij,react
+# End of https://www.toptal.com/developers/gitignore/api/intellij,react.env.local
+.env.production
